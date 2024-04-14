@@ -22,8 +22,14 @@ public class RegisterFunctions {
     }
 
     @LoggerFunction
-    public static void print(String content) {
+    public static String print(String content) {
         log.info("I'm say, content: {}", content);
+        return content;
+    }
+
+    @LoggerFunction
+    public static boolean isHello(String content) {
+        return "Hello".equals(content);
     }
 
     @LoggerFunction

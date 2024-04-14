@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class TestController {
 
     @GetMapping("/say")
-    @Logger(message = "'I want say ' + #print(#content)")
+    @Logger(condition = "#isHello(#content)", message = "'I want say ' + #print(#content)")
     public ResponseEntity<String> say(@RequestParam String content) {
         return ResponseEntity.ok(content);
     }

@@ -15,8 +15,6 @@
  */
 package com.lzhpo.logger;
 
-import cn.hutool.core.util.ObjectUtil;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +26,7 @@ import org.springframework.context.expression.CachedExpressionEvaluator;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
+import org.springframework.util.StringUtils;
 
 /**
  * @author lzhpo
@@ -60,8 +59,7 @@ public class LoggerEvaluationContext extends CachedExpressionEvaluator {
      * @return the evaluated result
      */
     public String evaluateExpression(String conditionExpression, Object targetObject, Method targetMethod, Object[] args) {
-        if (ObjectUtil.hasEmpty(conditionExpression, targetObject, targetMethod)) {
-            log.debug("The conditionExpression/targetObject/targetMethod is empty.");
+        if (!StringUtils.hasText(conditionExpression)) {
             return conditionExpression;
         }
 

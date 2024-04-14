@@ -31,16 +31,59 @@ import org.springframework.context.ApplicationEvent;
 @ToString
 public class LoggerEvent extends ApplicationEvent {
 
+    /**
+     * The log id.
+     */
     private String logId;
+
+    /**
+     * The log message.
+     */
     private String message;
-    private Boolean success;
+
+    /**
+     * The operator id.
+     */
     private String operatorId;
+
+    /**
+     * The log business id.
+     */
     private String bizId;
+
+    /**
+     * The log category.
+     */
     private String category;
+
+    /**
+     * The log tag.
+     */
     private String tag;
+
+    /**
+     * The log additional information.
+     */
     private String additional;
+
+    /**
+     * The log create time.
+     */
     private Date createTime;
+
+    /**
+     * Create this log take time (unit: milliseconds).
+     */
     private Long takeTime;
+
+    /**
+     * Whether success for evaluate all condition expression.
+     */
+    private Boolean success;
+
+    /**
+     * The errors when evaluate condition expression.
+     */
     private List<String> errors;
 
     public LoggerEvent(Object source) {

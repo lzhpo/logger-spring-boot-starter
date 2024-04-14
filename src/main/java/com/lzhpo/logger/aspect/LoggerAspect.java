@@ -16,6 +16,7 @@
 package com.lzhpo.logger.aspect;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.logger.LoggerEvaluationContext;
 import com.lzhpo.logger.annotation.Logger;
@@ -84,6 +85,11 @@ public class LoggerAspect {
             Object[] args = point.getArgs();
 
             LoggerEvaluationContext evaluationContext = new LoggerEvaluationContext();
+            if (!Boolean.parseBoolean(evaluateExpression(logger.condition(), targetObject, targetMethod, args, evaluationContext, loggerEvent))) {
+                log.debug("The resolved condition is false in @Logger.");
+                return;
+            }
+
             loggerEvent.setLogId(IdUtil.fastSimpleUUID());
             loggerEvent.setTag(evaluateExpression(logger.tag(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
             loggerEvent.setBizId(evaluateExpression(logger.bizId(), targetObject, targetMethod, args, evaluationContext, loggerEvent));

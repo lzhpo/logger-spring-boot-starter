@@ -16,6 +16,7 @@
 package com.lzhpo.logger.annotation;
 
 import cn.hutool.core.util.StrUtil;
+
 import java.lang.annotation.*;
 
 /**
@@ -31,7 +32,7 @@ public @interface Logger {
      *
      * @return condition
      */
-    String condition() default StrUtil.EMPTY;
+    String condition() default "true";
 
     /**
      * The logger message, support SpringEL expression and function.
