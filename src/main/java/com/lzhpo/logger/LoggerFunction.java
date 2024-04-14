@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.annotation;
+package com.lzhpo.logger;
 
 import cn.hutool.core.util.StrUtil;
+
 import java.lang.annotation.*;
 
 /**

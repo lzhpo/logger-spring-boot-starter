@@ -15,8 +15,6 @@
  */
 package com.lzhpo.logger;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import cn.hutool.core.util.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -25,6 +23,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Method;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 public class StandardEvaluationContextTest {

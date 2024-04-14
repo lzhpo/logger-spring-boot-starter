@@ -16,11 +16,6 @@
 package com.lzhpo.logger;
 
 import cn.hutool.core.util.StrUtil;
-import com.lzhpo.logger.annotation.LoggerFunction;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -29,14 +24,22 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.expression.spel.SpelMessage;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lzhpo
  */
 @Slf4j
+@Component
 public class LoggerFunctionRegistrar implements SmartInitializingSingleton, BeanFactoryPostProcessor {
 
     private ConfigurableListableBeanFactory beanFactory;

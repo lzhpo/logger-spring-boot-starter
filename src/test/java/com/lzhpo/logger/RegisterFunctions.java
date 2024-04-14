@@ -1,6 +1,5 @@
 package com.lzhpo.logger;
 
-import com.lzhpo.logger.annotation.LoggerFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
