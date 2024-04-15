@@ -15,8 +15,6 @@
  */
 package com.lzhpo.logger;
 
-import cn.hutool.core.util.StrUtil;
-
 import java.lang.annotation.*;
 
 /**
@@ -32,7 +30,7 @@ public @interface Logger {
      *
      * @return condition
      */
-    String condition() default "true";
+    String condition() default LoggerConstant.BOOLEAN_TRUE;
 
     /**
      * The logger message, support SpringEL expression and function.
@@ -46,33 +44,33 @@ public @interface Logger {
      *
      * @return operatorId
      */
-    String operatorId() default StrUtil.EMPTY;
+    String operatorId() default LoggerConstant.EMPTY;
 
     /**
      * The business id.
      *
      * @return bizId
      */
-    String bizId() default StrUtil.EMPTY;
+    String bizId() default LoggerConstant.EMPTY;
 
     /**
      * The logger category.
      *
      * @return category
      */
-    String category() default StrUtil.EMPTY;
+    String category() default LoggerConstant.EMPTY;
 
     /**
      * The logger tag.
      *
      * @return tag
      */
-    String tag() default StrUtil.EMPTY;
+    String tag() default LoggerConstant.EMPTY;
 
     /**
      * The logger additional information.
      *
      * @return additional
      */
-    String additional() default StrUtil.EMPTY;
+    String additional() default LoggerConstant.EMPTY;
 }

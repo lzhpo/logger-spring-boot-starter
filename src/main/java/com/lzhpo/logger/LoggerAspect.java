@@ -56,6 +56,7 @@ public class LoggerAspect {
 
         try {
             result = point.proceed();
+            loggerEvent.setResult(result);
         } catch (Exception exception) {
             loggerEvent.getErrors().add(exception.getMessage());
             throw exception;
@@ -113,7 +114,7 @@ public class LoggerAspect {
      */
     private String evaluateExpression(String expression, Object targetObject, Method targetMethod, Object[] args, LoggerEvaluationContext context, LoggerEvent event) {
         try {
-            return context.evaluateExpression(expression, targetObject, targetMethod, args);
+            return context.evaluateExpression(expression, targetObject, targetMethod, event.getResult(), args);
         } catch (Exception e) {
             log.error("Evaluate expression error: {}", e.getMessage(), e);
             event.getErrors().add(e.getMessage());

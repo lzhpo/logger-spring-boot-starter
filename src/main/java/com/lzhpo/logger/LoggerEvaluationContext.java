@@ -54,15 +54,16 @@ public class LoggerEvaluationContext extends CachedExpressionEvaluator {
      * @param conditionExpression the condition expression
      * @param targetObject        the target object
      * @param targetMethod        the target method
+     * @param result              the result
      * @param args                the args
      * @return the evaluated result
      */
-    public String evaluateExpression(String conditionExpression, Object targetObject, Method targetMethod, Object[] args) {
+    public String evaluateExpression(String conditionExpression, Object targetObject, Method targetMethod, Object result, Object[] args) {
         if (!StringUtils.hasText(conditionExpression)) {
             return conditionExpression;
         }
 
-        EvaluationContext evaluationContext = createEvaluationContext(targetObject, targetMethod, args);
+        EvaluationContext evaluationContext = createEvaluationContext(targetObject, targetMethod, result, args);
         return getExpression(conditionExpression, targetObject, targetMethod).getValue(evaluationContext, String.class);
     }
 
@@ -71,11 +72,13 @@ public class LoggerEvaluationContext extends CachedExpressionEvaluator {
      *
      * @param targetObject the target object
      * @param targetMethod the target method
+     * @param result       the result
      * @param args         the args
      * @return {@link EvaluationContext}
      */
-    public EvaluationContext createEvaluationContext(Object targetObject, Method targetMethod, Object[] args) {
+    public EvaluationContext createEvaluationContext(Object targetObject, Method targetMethod, Object result, Object[] args) {
         MethodBasedEvaluationContext evaluationContext = new MethodBasedEvaluationContext(targetObject, targetMethod, args, getParameterNameDiscoverer());
+        evaluationContext.setVariable(LoggerConstant.CONTEXT_RESULT, result);
         LoggerFunctionRegistrar.registerFunction(evaluationContext);
         return evaluationContext;
     }

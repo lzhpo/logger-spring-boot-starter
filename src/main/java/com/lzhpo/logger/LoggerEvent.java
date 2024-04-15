@@ -77,6 +77,11 @@ public class LoggerEvent extends ApplicationEvent {
     private Long takeTime;
 
     /**
+     * The business execute result.
+     */
+    private Object result;
+
+    /**
      * Whether success for evaluate all condition expression.
      */
     private Boolean success;
