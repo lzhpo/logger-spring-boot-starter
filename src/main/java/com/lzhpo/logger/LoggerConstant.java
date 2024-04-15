@@ -15,5 +15,5 @@ public final class LoggerConstant {
 
     public static final String BOOLEAN_FALSE = "false";
 
-    public static final String CONTEXT_RESULT = "result";
+    public static final String VARIABLE_RESULT = "result";
 }

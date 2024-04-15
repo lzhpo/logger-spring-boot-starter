@@ -78,7 +78,7 @@ public class LoggerEvaluationContext extends CachedExpressionEvaluator {
      */
     public EvaluationContext createEvaluationContext(Object targetObject, Method targetMethod, Object result, Object[] args) {
         MethodBasedEvaluationContext evaluationContext = new MethodBasedEvaluationContext(targetObject, targetMethod, args, getParameterNameDiscoverer());
-        evaluationContext.setVariable(LoggerConstant.CONTEXT_RESULT, result);
+        evaluationContext.setVariable(LoggerConstant.VARIABLE_RESULT, result);
         LoggerFunctionRegistrar.registerFunction(evaluationContext);
         return evaluationContext;
     }
