@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order")
 public class OrderController {
 
+    // spotless:off
     @PostMapping
     @Logger(
             condition = "#result.getSuccess()",
@@ -69,4 +70,5 @@ public class OrderController {
         response.setAddressId(request.getAddressId());
         return response;
     }
+    // spotless:on
 }

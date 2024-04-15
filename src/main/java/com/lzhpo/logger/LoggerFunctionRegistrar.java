@@ -16,6 +16,11 @@
 package com.lzhpo.logger;
 
 import cn.hutool.core.util.StrUtil;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -28,12 +33,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lzhpo
@@ -62,30 +61,31 @@ public class LoggerFunctionRegistrar implements SmartInitializingSingleton, Bean
     @Override
     public void afterSingletonsInstantiated() {
         Assert.notNull(beanFactory, "The beanFactory not initialized.");
-        String[] beanNames = beanFactory.getBeanNamesForType(Object.class);
+        Map<String, Object> loggerComponentBeanMap = beanFactory.getBeansWithAnnotation(LoggerComponent.class);
+        log.debug("Found {} @LoggerComponent.", loggerComponentBeanMap.size());
 
-        for (String beanName : beanNames) {
-            Object bean = beanFactory.getBean(beanName);
+        loggerComponentBeanMap.forEach((beanName, bean) -> {
             Class<?> beanClass = bean.getClass();
-            Method[] methods = ReflectionUtils.getDeclaredMethods(beanClass);
+            Method[] beanMethods = ReflectionUtils.getDeclaredMethods(beanClass);
+            log.debug("Processing {} bean for @LoggerFunction.", beanName);
 
-            for (Method method : methods) {
-                LoggerFunction loggerFunction = AnnotationUtils.findAnnotation(method, LoggerFunction.class);
+            for (Method beanMethod : beanMethods) {
+                LoggerFunction loggerFunction = AnnotationUtils.findAnnotation(beanMethod, LoggerFunction.class);
                 if (Objects.nonNull(loggerFunction)) {
-                    String functionName = StrUtil.blankToDefault(loggerFunction.value(), method.getName());
+                    String functionName = StrUtil.blankToDefault(loggerFunction.value(), beanMethod.getName());
                     log.debug("Found @LoggerFunction with functionName={} in beanName={}", functionName, beanName);
 
-                    if (!Modifier.isStatic(method.getModifiers())) {
-                        throw new IllegalArgumentException(SpelMessage.FUNCTION_MUST_BE_STATIC.formatMessage(ClassUtils.getQualifiedMethodName(method), functionName));
+                    if (!Modifier.isStatic(beanMethod.getModifiers())) {
+                        throw new IllegalArgumentException(SpelMessage.FUNCTION_MUST_BE_STATIC.formatMessage(
+                                ClassUtils.getQualifiedMethodName(beanMethod), functionName));
                     }
-
                     if (REGISTERED_FUNCTIONS.containsKey(functionName)) {
-                        throw new IllegalArgumentException(StrUtil.format("The @LoggerFunction with functionName={} already exists.", functionName));
+                        throw new IllegalArgumentException(StrUtil.format(
+                                "The @LoggerFunction with functionName={} already exists.", functionName));
                     }
-
-                    REGISTERED_FUNCTIONS.put(functionName, method);
+                    REGISTERED_FUNCTIONS.put(functionName, beanMethod);
                 }
             }
-        }
+        });
     }
 }

@@ -15,17 +15,17 @@
  */
 package com.lzhpo.logger;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.context.expression.CachedExpressionEvaluator;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.util.StringUtils;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lzhpo
@@ -36,50 +36,51 @@ public class LoggerEvaluationContext extends CachedExpressionEvaluator {
     private final Map<ExpressionKey, Expression> expressionCache = new ConcurrentHashMap<>(64);
 
     /**
-     * Get {@link Expression} of {@code conditionExpression}.
+     * Get {@link Expression} of {@code expression}.
      *
-     * @param conditionExpression the condition expression
-     * @param targetObject        the target object
-     * @param targetMethod        the target method
+     * @param expression the condition expression
+     * @param object     the target object
+     * @param method     the target method
      * @return {@link Expression}
      */
-    public Expression getExpression(String conditionExpression, Object targetObject, Method targetMethod) {
-        AnnotatedElementKey annotatedElementKey = new AnnotatedElementKey(targetMethod, targetObject.getClass());
-        return getExpression(expressionCache, annotatedElementKey, conditionExpression);
+    public Expression getExpression(String expression, Object object, Method method) {
+        AnnotatedElementKey annotatedElementKey = new AnnotatedElementKey(method, object.getClass());
+        return getExpression(expressionCache, annotatedElementKey, expression);
     }
 
     /**
-     * Evaluate {@code conditionExpression} and get result value.
+     * Evaluate {@code expression} and get result value.
      *
-     * @param conditionExpression the condition expression
-     * @param targetObject        the target object
-     * @param targetMethod        the target method
-     * @param result              the result
-     * @param args                the args
+     * @param expression the condition expression
+     * @param object     the target object
+     * @param method     the target method
+     * @param result     the result
+     * @param args       the args
      * @return the evaluated result
      */
-    public String evaluateExpression(String conditionExpression, Object targetObject, Method targetMethod, Object result, Object[] args) {
-        if (!StringUtils.hasText(conditionExpression)) {
-            return conditionExpression;
+    public String evalExpression(String expression, Object object, Method method, Object result, Object[] args) {
+        if (!StringUtils.hasText(expression)) {
+            return expression;
         }
 
-        EvaluationContext evaluationContext = createEvaluationContext(targetObject, targetMethod, result, args);
-        return getExpression(conditionExpression, targetObject, targetMethod).getValue(evaluationContext, String.class);
+        EvaluationContext evaluationContext = createEvalContext(object, method, result, args);
+        return getExpression(expression, object, method).getValue(evaluationContext, String.class);
     }
 
     /**
      * Create registered {@link LoggerFunction}'s {@link EvaluationContext}.
      *
-     * @param targetObject the target object
-     * @param targetMethod the target method
-     * @param result       the result
-     * @param args         the args
+     * @param object the target object
+     * @param method the target method
+     * @param result the result
+     * @param args   the args
      * @return {@link EvaluationContext}
      */
-    public EvaluationContext createEvaluationContext(Object targetObject, Method targetMethod, Object result, Object[] args) {
-        MethodBasedEvaluationContext evaluationContext = new MethodBasedEvaluationContext(targetObject, targetMethod, args, getParameterNameDiscoverer());
-        evaluationContext.setVariable(LoggerConstant.VARIABLE_RESULT, result);
-        LoggerFunctionRegistrar.registerFunction(evaluationContext);
-        return evaluationContext;
+    public EvaluationContext createEvalContext(Object object, Method method, Object result, Object[] args) {
+        ParameterNameDiscoverer discoverer = getParameterNameDiscoverer();
+        MethodBasedEvaluationContext context = new MethodBasedEvaluationContext(object, method, args, discoverer);
+        context.setVariable(LoggerConstant.VARIABLE_RESULT, result);
+        LoggerFunctionRegistrar.registerFunction(context);
+        return context;
     }
 }

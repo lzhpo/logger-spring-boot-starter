@@ -17,6 +17,9 @@ package com.lzhpo.logger;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -24,10 +27,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author lzhpo
@@ -48,20 +47,20 @@ public class LoggerAspect {
     @Around("@annotation(logger)")
     public Object doAround(ProceedingJoinPoint point, Logger logger) throws Throwable {
         Date createTime = new Date();
-        LoggerEvent loggerEvent = new LoggerEvent(this);
-        loggerEvent.setCreateTime(createTime);
-        loggerEvent.setErrors(new ArrayList<>());
+        LoggerEvent event = new LoggerEvent(this);
+        event.setCreateTime(createTime);
+        event.setErrors(new ArrayList<>());
 
         final Object result;
 
         try {
             result = point.proceed();
-            loggerEvent.setResult(result);
+            event.setResult(result);
         } catch (Exception exception) {
-            loggerEvent.getErrors().add(exception.getMessage());
+            event.getErrors().add(exception.getMessage());
             throw exception;
         } finally {
-            resolveLogger(point, logger, loggerEvent);
+            resolveLogger(point, logger, event);
         }
         return result;
     }
@@ -69,33 +68,34 @@ public class LoggerAspect {
     /**
      * Resolve {@link Logger} annotation and publish {@link LoggerEvent}.
      *
-     * @param point       {@link ProceedingJoinPoint}
-     * @param logger      {@link Logger}
-     * @param loggerEvent {@link LoggerEvent}
+     * @param point  {@link ProceedingJoinPoint}
+     * @param logger {@link Logger}
+     * @param event  {@link LoggerEvent}
      */
-    private void resolveLogger(ProceedingJoinPoint point, Logger logger, LoggerEvent loggerEvent) {
+    private void resolveLogger(ProceedingJoinPoint point, Logger logger, LoggerEvent event) {
         try {
-            Object targetObject = point.getThis();
+            Object object = point.getThis();
             MethodSignature signature = (MethodSignature) point.getSignature();
-            Method targetMethod = signature.getMethod();
+            Method method = signature.getMethod();
             Object[] args = point.getArgs();
 
-            LoggerEvaluationContext evaluationContext = new LoggerEvaluationContext();
-            if (!Boolean.parseBoolean(evaluateExpression(logger.condition(), targetObject, targetMethod, args, evaluationContext, loggerEvent))) {
+            LoggerEvaluationContext context = new LoggerEvaluationContext();
+            if (!Boolean.parseBoolean(evalExpression(logger.condition(), object, method, args, event, context))) {
                 log.debug("The resolved condition is false in @Logger.");
                 return;
             }
 
-            loggerEvent.setLogId(IdUtil.fastSimpleUUID());
-            loggerEvent.setTag(evaluateExpression(logger.tag(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setBizId(evaluateExpression(logger.bizId(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setMessage(evaluateExpression(logger.message(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setCategory(evaluateExpression(logger.category(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setOperatorId(evaluateExpression(logger.operatorId(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setAdditional(evaluateExpression(logger.additional(), targetObject, targetMethod, args, evaluationContext, loggerEvent));
-            loggerEvent.setSuccess(CollectionUtils.isEmpty(loggerEvent.getErrors()));
-            loggerEvent.setTakeTime(System.currentTimeMillis() - loggerEvent.getCreateTime().getTime());
-            SpringUtil.publishEvent(loggerEvent);
+            event.setLogId(IdUtil.fastSimpleUUID());
+            event.setTag(evalExpression(logger.tag(), object, method, args, event, context));
+            event.setBizId(evalExpression(logger.bizId(), object, method, args, event, context));
+            event.setMessage(evalExpression(logger.message(), object, method, args, event, context));
+            event.setCategory(evalExpression(logger.category(), object, method, args, event, context));
+            event.setOperatorId(evalExpression(logger.operatorId(), object, method, args, event, context));
+            event.setAdditional(evalExpression(logger.additional(), object, method, args, event, context));
+            event.setSuccess(CollectionUtils.isEmpty(event.getErrors()));
+            event.setTakeTime(System.currentTimeMillis() - event.getCreateTime().getTime());
+            SpringUtil.publishEvent(event);
+            log.debug("Published LoggerEvent, {} method takes {} ms.", method.getName(), event.getTakeTime());
         } catch (Exception e) {
             log.error("Resolve @Logger error: {}", e.getMessage(), e);
         }
@@ -104,21 +104,28 @@ public class LoggerAspect {
     /**
      * Evaluate condition expression to get result.
      *
-     * @param expression   the condition expression
-     * @param targetObject the target object
-     * @param targetMethod the target method
-     * @param args         the args
-     * @param context      {@link LoggerEvaluationContext}
-     * @param event        {@link LoggerEvent}
+     * @param expression the condition expression
+     * @param object     the target object
+     * @param method     the target method
+     * @param args       the args
+     * @param event      the logger event
+     * @param context    the logger evaluation context
      * @return the evaluated result
      */
-    private String evaluateExpression(String expression, Object targetObject, Method targetMethod, Object[] args, LoggerEvaluationContext context, LoggerEvent event) {
+    // spotless:off
+    private String evalExpression(String expression,
+                                  Object object,
+                                  Method method,
+                                  Object[] args,
+                                  LoggerEvent event,
+                                  LoggerEvaluationContext context) {
         try {
-            return context.evaluateExpression(expression, targetObject, targetMethod, event.getResult(), args);
+            return context.evalExpression(expression, object, method, event.getResult(), args);
         } catch (Exception e) {
             log.error("Evaluate expression error: {}", e.getMessage(), e);
             event.getErrors().add(e.getMessage());
             return expression;
         }
     }
+    // spotless:on
 }

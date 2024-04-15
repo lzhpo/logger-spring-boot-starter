@@ -16,7 +16,6 @@
 package com.lzhpo.logger;
 
 import cn.hutool.core.util.StrUtil;
-
 import java.lang.annotation.*;
 
 /**

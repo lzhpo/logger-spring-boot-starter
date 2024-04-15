@@ -23,5 +23,4 @@ import org.springframework.context.annotation.Import;
  */
 @AutoConfiguration
 @Import({LoggerFunctionRegistrar.class, LoggerAspect.class})
-public class LoggerAutoConfiguration {
-}
+public class LoggerAutoConfiguration {}

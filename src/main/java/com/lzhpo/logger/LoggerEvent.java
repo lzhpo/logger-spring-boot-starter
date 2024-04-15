@@ -15,13 +15,12 @@
  */
 package com.lzhpo.logger;
 
+import java.util.Date;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author lzhpo
@@ -72,7 +71,7 @@ public class LoggerEvent extends ApplicationEvent {
     private Date createTime;
 
     /**
-     * Create this log take time (unit: milliseconds).
+     * The target method and resolve {@link Logger} take time (unit: milliseconds).
      */
     private Long takeTime;
 
