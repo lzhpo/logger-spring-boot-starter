@@ -8,6 +8,20 @@
 - GitHub：[https://github.com/lzhpo/logger](https://github.com/lzhpo/logger)
 - Gitee：[https://gitee.com/lzhpo/logger](https://gitee.com/lzhpo/logger)
 
+## 前言
+
+> 操作日志在一个系统中占据着举足轻重的位置，记录操作日志的方式也五花八门，但操作日志应讲究可读性，且要与业务代码解耦，不侵入业务代码，以保持我们业务代码的整洁。
+
+本项目仅需`@Logger`注解配合监听`LoggerEvent`事件就可以实现操作日志与业务代码解耦，使用简单、功能强大、可读性强，并且提供了自定义函数等高级功能。
+
+```java
+@PostMapping("/orders")
+@Logger(message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'")
+public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) {
+  // ...
+}
+```
+
 ## 如何使用？
 
 *logger同时支持SpringBoot2和SpringBoot3*
