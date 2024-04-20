@@ -15,6 +15,8 @@
  */
 package com.lzhpo.logger;
 
+import static org.springframework.expression.spel.SpelMessage.FUNCTION_MUST_BE_STATIC;
+
 import cn.hutool.core.util.StrUtil;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,7 +29,6 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.expression.spel.SpelMessage;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -58,34 +59,33 @@ public class LoggerFunctionRegistrar implements SmartInitializingSingleton, Bean
         this.beanFactory = beanFactory;
     }
 
+    // spotless:off
     @Override
     public void afterSingletonsInstantiated() {
         Assert.notNull(beanFactory, "The beanFactory not initialized.");
         Map<String, Object> loggerComponentBeanMap = beanFactory.getBeansWithAnnotation(LoggerComponent.class);
-        log.debug("Found {} @LoggerComponent.", loggerComponentBeanMap.size());
+        log.debug("Found {} class has @LoggerComponent.", loggerComponentBeanMap.size());
 
-        loggerComponentBeanMap.forEach((beanName, bean) -> {
-            Class<?> beanClass = bean.getClass();
-            Method[] beanMethods = ReflectionUtils.getDeclaredMethods(beanClass);
-            log.debug("Processing {} bean for @LoggerFunction.", beanName);
+        loggerComponentBeanMap.forEach((beanName, beanInstance) -> {
+            log.debug("Processing bean=[{}] for @LoggerFunction.", beanName);
+            Class<?> clazz = beanInstance.getClass();
+            Method[] methods = ReflectionUtils.getDeclaredMethods(clazz);
 
-            for (Method beanMethod : beanMethods) {
-                LoggerFunction loggerFunction = AnnotationUtils.findAnnotation(beanMethod, LoggerFunction.class);
-                if (Objects.nonNull(loggerFunction)) {
-                    String functionName = StrUtil.blankToDefault(loggerFunction.value(), beanMethod.getName());
-                    log.debug("Found @LoggerFunction with functionName={} in beanName={}", functionName, beanName);
-
-                    if (!Modifier.isStatic(beanMethod.getModifiers())) {
-                        throw new IllegalArgumentException(SpelMessage.FUNCTION_MUST_BE_STATIC.formatMessage(
-                                ClassUtils.getQualifiedMethodName(beanMethod), functionName));
-                    }
-                    if (REGISTERED_FUNCTIONS.containsKey(functionName)) {
-                        throw new IllegalArgumentException(StrUtil.format(
-                                "The @LoggerFunction with functionName={} already exists.", functionName));
-                    }
-                    REGISTERED_FUNCTIONS.put(functionName, beanMethod);
+            for (Method method : methods) {
+                String methodName = method.getName();
+                LoggerFunction loggerFunction = AnnotationUtils.findAnnotation(method, LoggerFunction.class);
+                if (Objects.isNull(loggerFunction)) {
+                    log.debug("The method=[{}] not exists @LoggerFunction, skipped.", methodName);
+                    continue;
                 }
+
+                String functionName = StrUtil.blankToDefault(loggerFunction.value(), methodName);
+                log.debug("Found @LoggerFunction with functionName=[{}] in beanName=[{}]", functionName, beanName);
+                Assert.isTrue(Modifier.isStatic(method.getModifiers()), FUNCTION_MUST_BE_STATIC.formatMessage(ClassUtils.getQualifiedMethodName(method), functionName));
+                Assert.isTrue(!REGISTERED_FUNCTIONS.containsKey(functionName), StrUtil.format("The function name already exists for @LoggerFunction", functionName));
+                REGISTERED_FUNCTIONS.put(functionName, method);
             }
         });
     }
+    // spotless:on
 }

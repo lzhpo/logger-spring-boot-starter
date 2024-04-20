@@ -49,4 +49,8 @@ public class OrderRegisterFunction {
     public static String queryNewAddress(String addressId) {
         return "Guangzhou";
     }
+
+    public static void test() {
+        System.out.println("Hello World!");
+    }
 }
