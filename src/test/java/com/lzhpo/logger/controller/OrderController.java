@@ -40,7 +40,8 @@ public class OrderController {
             tag = "'Create Order'",
             bizId = "#getBusinessId(#result.orderId)",
             operatorId = "#queryUserName(#request.getUserId())",
-            message = "#queryUserName(#request.getUserId()) + ' placed ' + #queryProductName(#request.getProductId()) + ' order using ' + #request.getPaymentType()"
+            message = "#queryUserName(#request.getUserId()) + ' placed ' + #queryProductName(#request.getProductId()) + ' order using ' + #request.getPaymentType()",
+            additional = "#queryUserName(#request.getUserId()) + ' level is ' + #queryUserVip(#request.getUserId()) + ', request date ' + T(java.time.LocalDateTime).now()"
     )
     public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) {
         CreateOrderResponse response = new CreateOrderResponse();
@@ -60,7 +61,8 @@ public class OrderController {
             tag = "'Modify Order'",
             bizId = "#getBusinessId(#result.orderId)",
             operatorId = "#queryUserName(#request.getUserId())",
-            message = "#queryUserName(#request.getUserId()) + ' updated address from ' + #queryOldAddress(#request.getOrderId()) + ' to ' + #queryNewAddress(#request.getAddressId())"
+            message = "#queryUserName(#request.getUserId()) + ' updated address from ' + #queryOldAddress(#request.getOrderId()) + ' to ' + #queryNewAddress(#request.getAddressId())",
+            additional = "#queryUserName(#request.getUserId()) + ' level is ' + #queryUserVip(#request.getUserId()) + ', request date ' + T(java.time.LocalDateTime).now()"
     )
     public ModifyOrderResponse modifyOrder(@RequestBody ModifyOrderRequest request) {
         ModifyOrderResponse response = new ModifyOrderResponse();

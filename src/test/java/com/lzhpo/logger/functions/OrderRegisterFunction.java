@@ -36,6 +36,11 @@ public class OrderRegisterFunction {
     }
 
     @LoggerFunction
+    public static String queryUserVip(String userId) {
+        return "VIP5";
+    }
+
+    @LoggerFunction
     public static String queryProductName(String productId) {
         return "ABC";
     }
