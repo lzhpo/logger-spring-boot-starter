@@ -91,8 +91,8 @@ public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) 
 
 #### 2.2 自定义函数注解
 
-`@LoggerComponent`: 用于标识一个组件是属于 logger 的。
-`@LoggerFunction`: 用于支持在 `@Logger` 注解中自定义函数，函数名默认取 `@LoggerFunction` 注解下的方法名，方法必须是 static，同时函数名支持自定义，例如：`@LoggerFunction("findUserName")`
+- `@LoggerComponent`: 用于标识一个组件是属于 logger 的。
+- `@LoggerFunction`: 用于支持在 `@Logger` 注解中自定义函数，函数名默认取 `@LoggerFunction` 注解下的方法名，方法必须是 static，同时函数名支持自定义，例如：`@LoggerFunction("findUserName")`
 
 简单示例演示：
 ```java
