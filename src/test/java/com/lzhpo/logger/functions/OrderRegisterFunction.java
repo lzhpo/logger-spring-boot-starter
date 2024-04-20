@@ -32,7 +32,7 @@ public class OrderRegisterFunction {
 
     @LoggerFunction("findUserName")
     public static String findUserName(String userId) {
-        return "Jack";
+        return "小刘";
     }
 
     @LoggerFunction

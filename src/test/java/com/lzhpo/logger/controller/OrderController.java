@@ -40,8 +40,8 @@ public class OrderController {
             tag = "'Create Order'",
             bizId = "#getBusinessId(#result.orderId)",
             operatorId = "#findUserName(#request.getUserId())",
-            message = "'用户' + #findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
-            additional = "'用户' + #findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
+            message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
+            additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
     )
     public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) {
         CreateOrderResponse response = new CreateOrderResponse();
@@ -61,8 +61,8 @@ public class OrderController {
             tag = "'Modify Order'",
             bizId = "#getBusinessId(#result.orderId)",
             operatorId = "#findUserName(#request.getUserId())",
-            message = "'用户' + #findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())",
-            additional = "'用户' + #findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
+            message = "#findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())",
+            additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
     )
     public ModifyOrderResponse modifyOrder(@RequestBody ModifyOrderRequest request) {
         ModifyOrderResponse response = new ModifyOrderResponse();
