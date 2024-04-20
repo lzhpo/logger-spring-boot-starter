@@ -39,12 +39,12 @@
 #### 2.1 `@Logger`注解
 
 `@Logger`注解解释：
-- condition: 生成日志的条件，true 或 false，支持 SpringEL 表达式。
+- condition: 生成日志的条件，非必需，true 或 false，支持 SpringEL 表达式。
   ```java
   // 获取返回结果中的成功标志
   condition = "#result.getSuccess()"
   ```
-- message: 日志内容，支持 SpringEL 表达式。
+- message: 日志内容，必需，支持 SpringEL 表达式。
   ```java
   // 从数据库中查询用户名称和产品名称，结果示例：小刘使用支付宝下单了ABC产品
   message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'"
@@ -52,26 +52,26 @@
   // 从数据库中查询用户名称和地址，结果示例：小刘将地址从Jiangxi修改为Guangzhou
   message = "#findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())"
   ```
-- operatorId: 日志关联的操作人，支持 SpringEL 表达式。
+- operatorId: 日志关联的操作人，非必需，支持 SpringEL 表达式。
   ```java
   // 从数据库中查询用户名称
   operatorId = "#findUserName(#request.getUserId())"
   ```
-- bizId: 日志关联的业务编号，支持 SpringEL 表达式。
+- bizId: 日志关联的业务编号，非必需，支持 SpringEL 表达式。
   ```java
   bizId = "#getBusinessId(#result.orderId)"
   ```
-- category: 日志关联的类型，支持 SpringEL 表达式。
+- category: 日志关联的类型，非必需，支持 SpringEL 表达式。
   ```java
   // 可以使用纯字符串或SpringEL表达式，自由发挥
   category = "'Operation Log'"
   ```
-- tag: 日志关联的标签，支持 SpringEL 表达式。
+- tag: 日志关联的标签，非必需，支持 SpringEL 表达式。
   ```java
   // 可以使用纯字符串或SpringEL表达式，自由发挥
   tag = "'Create Order'"
   ```
-- additional: 日志额外的信息，可自由发挥，支持 SpringEL 表达式。
+- additional: 日志额外的信息，非必需，可自由发挥，支持 SpringEL 表达式。
   ```java
   // 从数据库中查询用户名称和会员等级
   additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
