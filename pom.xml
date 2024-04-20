@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.lzhpo</groupId>
-    <artifactId>logger</artifactId>
+    <artifactId>logger-spring-boot-starter</artifactId>
     <version>${revision}</version>
-    <name>logger</name>
-    <description>logger</description>
+    <name>${project.artifactId}</name>
+    <description>${project.artifactId}</description>
 
     <properties>
         <server.id>ossrh</server.id>

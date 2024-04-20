@@ -1,18 +1,16 @@
 ![](https://img.shields.io/badge/JDK-1.8+-success.svg)
 ![](https://maven-badges.herokuapp.com/maven-central/com.lzhpo/logger/badge.svg?color=blueviolet)
 ![](https://img.shields.io/:license-Apache2-orange.svg)
-[![Style check](https://github.com/lzhpo/logger/actions/workflows/style-check.yml/badge.svg)](https://github.com/lzhpo/logger/actions/workflows/style-check.yml)
+[![Style check](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml/badge.svg)](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml)
 
 ## 开源地址
 
-- GitHub：[https://github.com/lzhpo/logger](https://github.com/lzhpo/logger)
-- Gitee：[https://gitee.com/lzhpo/logger](https://gitee.com/lzhpo/logger)
+- GitHub：[https://github.com/lzhpo/logger-spring-boot-starter](https://github.com/lzhpo/logger-spring-boot-starter)
+- Gitee：[https://gitee.com/lzhpo/logger-spring-boot-starter](https://gitee.com/lzhpo/logger-spring-boot-starter)
 
 ## 前言
 
 > 操作日志在一个系统中占据着举足轻重的位置，记录操作日志的方式也五花八门，但操作日志应讲究可读性，且要与业务代码解耦，不侵入业务代码，以保持我们业务代码的整洁。
-
-本项目仅需`@Logger`注解配合监听`LoggerEvent`事件就可以实现操作日志与业务代码解耦，使用简单、功能强大、可读性强，支持SpringEL表达式，并且提供了自定义函数等高级功能。
 
 ```java
 @PostMapping("/orders")
