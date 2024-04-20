@@ -5,8 +5,8 @@
 
 ## 开源地址
 
-- GitHub：[https://github.com/lzhpo/sensitive-spring-boot-starter](https://github.com/lzhpo/sensitive-spring-boot-starter)
-- Gitee：[https://gitee.com/lzhpo/sensitive-spring-boot-starter](https://gitee.com/lzhpo/sensitive-spring-boot-starter)
+- GitHub：[https://github.com/lzhpo/logger](https://github.com/lzhpo/logger)
+- Gitee：[https://gitee.com/lzhpo/logger](https://gitee.com/lzhpo/logger)
 
 ## 如何使用？
 
