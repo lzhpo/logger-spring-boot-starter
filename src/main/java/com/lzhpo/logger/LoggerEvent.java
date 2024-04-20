@@ -15,13 +15,12 @@
  */
 package com.lzhpo.logger;
 
+import java.util.Date;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author lzhpo
