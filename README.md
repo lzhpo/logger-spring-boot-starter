@@ -25,13 +25,13 @@
   ```xml
   <dependency>
     <groupId>com.lzhpo</groupId>
-    <artifactId>logger</artifactId>
+    <artifactId>logger-spring-boot-starter</artifactId>
     <version>${latest-version}</version>
   </dependency>
   ```
 - Gradle:
   ```groovy
-  implementation 'com.lzhpo:logger:${latest-version}'
+  implementation 'com.lzhpo:logger-spring-boot-starter:${latest-version}'
   ```
 
 ### 2.使用注解
