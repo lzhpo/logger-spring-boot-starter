@@ -10,15 +10,7 @@
 
 ## 前言
 
-> 操作日志在一个系统中占据着举足轻重的位置，记录操作日志的方式也五花八门，但记录操作日志应讲究可读性、复杂场景支持、业务代码解耦，不侵入业务代码，以保持我们业务代码的整洁。
-
-```java
-@PostMapping("/orders")
-@Logger(message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'")
-public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) {
-  // ...
-}
-```
+> 操作日志在一个系统中占据着举足轻重的位置，记录操作日志的方式也五花八门，但应讲究可读性、复杂场景支持、业务代码解耦，不侵入业务代码，以保持我们业务代码的整洁。
 
 ## 如何使用？
 
