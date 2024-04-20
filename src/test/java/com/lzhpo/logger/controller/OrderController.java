@@ -15,12 +15,13 @@
  */
 package com.lzhpo.logger.controller;
 
-import cn.hutool.core.util.IdUtil;
 import com.lzhpo.logger.Logger;
 import com.lzhpo.logger.domain.CreateOrderRequest;
 import com.lzhpo.logger.domain.CreateOrderResponse;
 import com.lzhpo.logger.domain.ModifyOrderRequest;
 import com.lzhpo.logger.domain.ModifyOrderResponse;
+import com.lzhpo.logger.service.OrderService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/order")
 public class OrderController {
+
+    private final OrderService orderService;
 
     // spotless:off
     @PostMapping
@@ -44,14 +48,7 @@ public class OrderController {
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
     )
     public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) {
-        CreateOrderResponse response = new CreateOrderResponse();
-        response.setSuccess(true);
-        response.setOrderId(IdUtil.fastSimpleUUID());
-        response.setUserId(request.getUserId());
-        response.setProductId(request.getProductId());
-        response.setAddress(request.getAddress());
-        response.setPaymentType(request.getPaymentType());
-        return response;
+        return orderService.createOrder(request);
     }
 
     @PutMapping
@@ -65,12 +62,7 @@ public class OrderController {
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
     )
     public ModifyOrderResponse modifyOrder(@RequestBody ModifyOrderRequest request) {
-        ModifyOrderResponse response = new ModifyOrderResponse();
-        response.setSuccess(true);
-        response.setOrderId(request.getOrderId());
-        response.setUserId(request.getUserId());
-        response.setAddressId(request.getAddressId());
-        return response;
+        return orderService.modifyOrder(request);
     }
     // spotless:on
 }

@@ -38,6 +38,7 @@
 
 #### 2.1 `@Logger`注解
 
+`@Logger`注解解释：
 - condition: 生成日志的条件，true 或 false，支持 SpringEL 表达式。
   ```java
   // 获取返回结果中的成功标志
@@ -77,6 +78,7 @@
   ```
 
 简单示例演示：
+
 ```java
 @PostMapping("/orders")
 @Logger(
@@ -93,10 +95,30 @@ public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) 
 }
 ```
 
+如果不想放在controller，同样也可以将注解放在service：
+```java
+@Service
+public class OrderServiceImpl implements OrderService {
+
+    @Logger(
+        condition = "#result.getSuccess()",
+        category = "'Operation Log'",
+        tag = "'Create Order'",
+        bizId = "#getBusinessId(#result.orderId)",
+        operatorId = "#findUserName(#request.getUserId())",
+        message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
+        additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
+    )
+    public CreateOrderResponse createOrder(CreateOrderRequest request) {
+        // ...
+    }
+}
+```
+
 #### 2.2 自定义函数注解
 
 - `@LoggerComponent`: 用于标识一个组件是属于 logger 的。
-- `@LoggerFunction`: 用于支持在 `@Logger` 注解中自定义函数，函数名默认取 `@LoggerFunction` 注解下的方法名，方法必须是 static，同时函数名支持自定义，例如：`@LoggerFunction("findUserName")`
+- `@LoggerFunction`: 用于支持在 `@Logger` 注解中自定义函数，需要注意的是方法必须是 static，函数名默认取 `@LoggerFunction` 注解下的方法名，函数名支持自定义，例如：`@LoggerFunction("findUserName")`
 
 简单示例演示：
 ```java
