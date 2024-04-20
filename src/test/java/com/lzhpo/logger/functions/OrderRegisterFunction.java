@@ -30,28 +30,28 @@ public class OrderRegisterFunction {
         return DigestUtil.sha256Hex(orderId);
     }
 
-    @LoggerFunction
-    public static String queryUserName(String userId) {
+    @LoggerFunction("findUserName")
+    public static String findUserName(String userId) {
         return "Jack";
     }
 
     @LoggerFunction
-    public static String queryUserVip(String userId) {
+    public static String findUserVip(String userId) {
         return "VIP5";
     }
 
     @LoggerFunction
-    public static String queryProductName(String productId) {
+    public static String findProductName(String productId) {
         return "ABC";
     }
 
     @LoggerFunction
-    public static String queryOldAddress(String orderId) {
+    public static String findOldAddress(String orderId) {
         return "Jiangxi";
     }
 
     @LoggerFunction
-    public static String queryNewAddress(String addressId) {
+    public static String findNewAddress(String addressId) {
         return "Guangzhou";
     }
 

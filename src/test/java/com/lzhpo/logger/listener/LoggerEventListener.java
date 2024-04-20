@@ -32,5 +32,6 @@ public class LoggerEventListener {
     @EventListener
     public void process(LoggerEvent event) {
         log.info("Received LoggerEvent: {}", event);
+        log.info(event.getMessage());
     }
 }
