@@ -17,9 +17,6 @@ package com.lzhpo.logger;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,6 +24,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author lzhpo
@@ -57,7 +58,7 @@ public class LoggerAspect {
             result = point.proceed();
             event.setResult(result);
         } catch (Exception exception) {
-            event.getErrors().add(exception.getMessage());
+            event.getErrors().add(exception);
             throw exception;
         } finally {
             resolveLogger(point, logger, event);
@@ -121,9 +122,9 @@ public class LoggerAspect {
                                   LoggerEvaluationContext context) {
         try {
             return context.evalExpression(expression, object, method, event.getResult(), args);
-        } catch (Exception e) {
-            log.error("Evaluate expression error: {}", e.getMessage(), e);
-            event.getErrors().add(e.getMessage());
+        } catch (Exception exception) {
+            log.error("Evaluate expression error: {}", exception.getMessage(), exception);
+            event.getErrors().add(exception);
             return expression;
         }
     }

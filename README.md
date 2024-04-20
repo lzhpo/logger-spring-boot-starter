@@ -131,6 +131,39 @@ public class OrderRegisterFunction {
 }
 ```
 
+#### 2.3 异步监听日志事件
+
+日志解析完毕之后会发布一个 `LoggerEvent` 事件，可以自定义 Listener 进行处理。
+
+例如：
+```java
+@Slf4j
+@Component
+public class LoggerEventListener {
+
+    @Async
+    @EventListener
+    public void process(LoggerEvent event) {
+        log.info("Received LoggerEvent: {}", event);
+        log.info(event.getMessage());
+    }
+}
+```
+
+`LoggerEvent` 字段解释:
+- logId: 日志编号。
+- message: 日志内容。
+- operatorId: 操作人编号。
+- bizId: 业务编号。
+- category: 日志分类。
+- tag: 日志标签。
+- additional: 日志额外信息。
+- createTime: 日志创建时间。
+- takeTime: 业务方法耗时，单位：毫秒。
+- result: 业务方法执行结果。
+- success: 业务方法是否执行成功。
+- errors: 业务方法执行期间发生的异常。
+
 ## 公众号
 
 |         微信          |            公众号             |

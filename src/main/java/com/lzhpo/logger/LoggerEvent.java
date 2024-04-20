@@ -15,12 +15,13 @@
  */
 package com.lzhpo.logger;
 
-import java.util.Date;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author lzhpo
@@ -71,24 +72,24 @@ public class LoggerEvent extends ApplicationEvent {
     private Date createTime;
 
     /**
-     * The target method and resolve {@link Logger} take time (unit: milliseconds).
+     * The business method take time (unit: milliseconds).
      */
     private Long takeTime;
 
     /**
-     * The business execute result.
+     * The business method execute result.
      */
     private Object result;
 
     /**
-     * Whether success for evaluate all condition expression.
+     * The business method whether execute success.
      */
     private Boolean success;
 
     /**
-     * The errors when evaluate condition expression.
+     * The business method execute exception.
      */
-    private List<String> errors;
+    private List<Exception> errors;
 
     public LoggerEvent(Object source) {
         super(source);
