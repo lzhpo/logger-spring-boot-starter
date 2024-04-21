@@ -56,7 +56,7 @@ public class LoggerAspect {
     @Around("@annotation(logger)")
     public Object doAround(ProceedingJoinPoint point, Logger logger) throws Throwable {
         Date createTime = new Date();
-        Object result = null;
+        Object result;
 
         LoggerEvent event = new LoggerEvent(this);
         event.setCreateTime(createTime);
@@ -69,17 +69,7 @@ public class LoggerAspect {
             event.getErrors().add(exception);
             throw exception;
         } finally {
-            Object object = point.getThis();
-            MethodSignature signature = (MethodSignature) point.getSignature();
-            Method method = signature.getMethod();
-            Object[] args = point.getArgs();
-
-            LoggerExpressionEvaluator evaluator = new LoggerExpressionEvaluator();
-            ParameterNameDiscoverer discoverer = evaluator.getParameterNameDiscoverer();
-            LoggerContextHolder.initialize(object, method, result, args, discoverer);
-
-            resolveLogger(logger, event, evaluator);
-            LoggerContextHolder.clearContext();
+            resolveLogger(point, logger, event);
         }
         return result;
     }
@@ -87,11 +77,20 @@ public class LoggerAspect {
     /**
      * Resolve {@link Logger} annotation and publish {@link LoggerEvent}.
      *
-     * @param logger    {@link Logger}
-     * @param event     {@link LoggerEvent}
-     * @param evaluator {@link LoggerExpressionEvaluator}
+     * @param point  {@link ProceedingJoinPoint}
+     * @param logger {@link Logger}
+     * @param event  {@link LoggerEvent}
      */
-    private void resolveLogger(Logger logger, LoggerEvent event, LoggerExpressionEvaluator evaluator) {
+    private void resolveLogger(ProceedingJoinPoint point, Logger logger, LoggerEvent event) {
+        Object object = point.getThis();
+        MethodSignature signature = (MethodSignature) point.getSignature();
+        Method method = signature.getMethod();
+        Object[] args = point.getArgs();
+
+        LoggerExpressionEvaluator evaluator = new LoggerExpressionEvaluator();
+        ParameterNameDiscoverer discoverer = evaluator.getParameterNameDiscoverer();
+        LoggerContextHolder.initialize(object, method, event.getResult(), args, discoverer);
+
         try {
             LoggerEvaluationContext context = LoggerContextHolder.getContext();
             if (!Boolean.parseBoolean(evalExpression(logger.condition(), event, context, evaluator))) {
@@ -127,6 +126,8 @@ public class LoggerAspect {
                     });
         } catch (Exception e) {
             log.error("Resolve @Logger error: {}", e.getMessage(), e);
+        } finally {
+            LoggerContextHolder.clearContext();
         }
     }
 
