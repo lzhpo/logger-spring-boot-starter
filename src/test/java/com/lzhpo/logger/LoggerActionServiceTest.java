@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Import;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @SpringBootTest(classes = LoggerTestApplication.class)
 @Import({LoggerAutoConfiguration.class, LoggerAction.class, LoggerListenerTest.class})
-class LoggerActionTest {
+class LoggerActionServiceTest {
 
     @Autowired
     private LoggerAction loggerAction;
