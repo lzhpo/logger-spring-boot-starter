@@ -105,8 +105,7 @@ public class LoggerAspect {
                     .orElseGet(() -> Optional.ofNullable(operatorAwareObjectProvider.getIfAvailable())
                             .map(OperatorAware::getCurrentOperatorId)
                             .orElseGet(() -> {
-                                log.debug(
-                                        "No operatorId was entered, and also cannot be obtained using OperatorAware.");
+                                log.debug("No operatorId was entered, also cannot be obtained using OperatorAware.");
                                 return null;
                             }));
             event.setOperatorId(operatorId);
