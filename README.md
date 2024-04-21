@@ -100,25 +100,7 @@ public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) 
 }
 ```
 
-如果不想放在controller，同样也可以将注解放在service：
-```java
-@Service
-public class OrderServiceImpl implements OrderService {
-
-    @Logger(
-        condition = "#result.getSuccess()",
-        category = "'Operation Log'",
-        tag = "'Create Order'",
-        businessId = "#getBusinessId(#result.orderId)",
-        operatorId = "#findUserName(#request.getUserId())",
-        message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
-        additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
-    )
-    public CreateOrderResponse createOrder(CreateOrderRequest request) {
-        // ...
-    }
-}
-```
+_如果不想放在controller，同样也可以将注解放在service。_
 
 #### 2.2 自定义函数注解
 
@@ -131,33 +113,8 @@ public class OrderServiceImpl implements OrderService {
 public class OrderRegisterFunction {
 
   @LoggerFunction
-  public static String getBusinessId(String orderId) {
-    return DigestUtil.sha256Hex(orderId);
-  }
-
-  @LoggerFunction("findUserName")
-  public static String findUserName(String userId) {
-    return "Jack";
-  }
-
-  @LoggerFunction
-  public static String findUserVip(String userId) {
-    return "VIP5";
-  }
-
-  @LoggerFunction
   public static String findProductName(String productId) {
-    return "ABC";
-  }
-
-  @LoggerFunction
-  public static String findOldAddress(String orderId) {
-    return "Jiangxi";
-  }
-
-  @LoggerFunction
-  public static String findNewAddress(String addressId) {
-    return "Guangzhou";
+    // ...
   }
 }
 ```
