@@ -20,15 +20,19 @@ import cn.hutool.extra.spring.SpringUtil;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author lzhpo
@@ -36,7 +40,10 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class LoggerAspect {
+
+    private final ObjectProvider<OperatorAware> operatorAwareObjectProvider;
 
     /**
      * Around aspect for {@link Logger} annotation.
@@ -92,13 +99,24 @@ public class LoggerAspect {
                 return;
             }
 
+            String operatorId = Optional.ofNullable(logger.operatorId())
+                    .filter(StringUtils::hasText)
+                    .map(operator -> evalExpression(operator, event, context, evaluator))
+                    .orElseGet(() -> Optional.ofNullable(operatorAwareObjectProvider.getIfAvailable())
+                            .map(OperatorAware::getCurrentOperatorId)
+                            .orElseGet(() -> {
+                                log.debug(
+                                        "No operatorId was entered, and also cannot be obtained using OperatorAware.");
+                                return null;
+                            }));
+            event.setOperatorId(operatorId);
+
             event.setLogId(IdUtil.fastSimpleUUID());
             event.setSuccess(CollectionUtils.isEmpty(event.getErrors()));
             event.setTag(evalExpression(logger.tag(), event, context, evaluator));
             event.setMessage(evalExpression(logger.message(), event, context, evaluator));
             event.setCategory(evalExpression(logger.category(), event, context, evaluator));
             event.setBusinessId(evalExpression(logger.businessId(), event, context, evaluator));
-            event.setOperatorId(evalExpression(logger.operatorId(), event, context, evaluator));
             event.setAdditional(evalExpression(logger.additional(), event, context, evaluator));
             event.setTakeTime(System.currentTimeMillis() - event.getCreateTime().getTime());
 
