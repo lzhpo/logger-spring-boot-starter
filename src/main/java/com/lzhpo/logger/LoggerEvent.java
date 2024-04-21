@@ -48,7 +48,7 @@ public class LoggerEvent extends ApplicationEvent {
     /**
      * The log business id.
      */
-    private String bizId;
+    private String businessId;
 
     /**
      * The log category.

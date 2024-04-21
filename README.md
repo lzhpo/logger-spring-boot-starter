@@ -2,6 +2,7 @@
 ![](https://maven-badges.herokuapp.com/maven-central/com.lzhpo/logger/badge.svg?color=blueviolet)
 ![](https://img.shields.io/:license-Apache2-orange.svg)
 [![Style check](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml/badge.svg)](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b7b948873ebf40b4be396fe7f0483a97)](https://app.codacy.com/gh/lzhpo/logger-spring-boot-starter/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## 开源地址
 
@@ -57,9 +58,9 @@
   // 从数据库中查询用户名称
   operatorId = "#findUserName(#request.getUserId())"
   ```
-- bizId: 日志关联的业务编号，非必需，支持 SpringEL 表达式。
+- businessId: 日志关联的业务编号，非必需，支持 SpringEL 表达式。
   ```java
-  bizId = "#getBusinessId(#result.orderId)"
+  businessId = "#getBusinessId(#result.orderId)"
   ```
 - category: 日志关联的类型，非必需，支持 SpringEL 表达式。
   ```java
@@ -85,7 +86,7 @@
     condition = "#result.getSuccess()",
     category = "'Operation Log'",
     tag = "'Create Order'",
-    bizId = "#getBusinessId(#result.orderId)",
+    businessId = "#getBusinessId(#result.orderId)",
     operatorId = "#findUserName(#request.getUserId())",
     message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
     additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
@@ -104,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         condition = "#result.getSuccess()",
         category = "'Operation Log'",
         tag = "'Create Order'",
-        bizId = "#getBusinessId(#result.orderId)",
+        businessId = "#getBusinessId(#result.orderId)",
         operatorId = "#findUserName(#request.getUserId())",
         message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
         additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
@@ -180,7 +181,7 @@ public class LoggerEventListener {
 - logId: 日志编号。
 - message: 日志内容。
 - operatorId: 操作人编号。
-- bizId: 业务编号。
+- businessId: 业务编号。
 - category: 日志分类。
 - tag: 日志标签。
 - additional: 日志额外信息。

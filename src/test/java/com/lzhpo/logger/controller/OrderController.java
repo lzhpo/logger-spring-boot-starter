@@ -42,7 +42,7 @@ public class OrderController {
             condition = "#result.getSuccess()",
             category = "'Operation Log'",
             tag = "'Create Order'",
-            bizId = "#getBusinessId(#result.orderId)",
+            businessId = "#getBusinessId(#result.orderId)",
             operatorId = "#findUserName(#request.getUserId())",
             message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
@@ -56,7 +56,7 @@ public class OrderController {
             condition = "#result.getSuccess()",
             category = "'Operation Log'",
             tag = "'Modify Order'",
-            bizId = "#getBusinessId(#result.orderId)",
+            businessId = "#getBusinessId(#result.orderId)",
             operatorId = "#findUserName(#request.getUserId())",
             message = "#findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())",
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"

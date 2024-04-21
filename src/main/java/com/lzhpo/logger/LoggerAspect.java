@@ -87,7 +87,7 @@ public class LoggerAspect {
 
             event.setLogId(IdUtil.fastSimpleUUID());
             event.setTag(evalExpression(logger.tag(), object, method, args, event, context));
-            event.setBizId(evalExpression(logger.bizId(), object, method, args, event, context));
+            event.setBusinessId(evalExpression(logger.businessId(), object, method, args, event, context));
             event.setMessage(evalExpression(logger.message(), object, method, args, event, context));
             event.setCategory(evalExpression(logger.category(), object, method, args, event, context));
             event.setOperatorId(evalExpression(logger.operatorId(), object, method, args, event, context));

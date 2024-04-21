@@ -49,9 +49,9 @@ public @interface Logger {
     /**
      * The business id.
      *
-     * @return bizId
+     * @return businessId
      */
-    String bizId() default LoggerConstant.EMPTY;
+    String businessId() default LoggerConstant.EMPTY;
 
     /**
      * The logger category.
