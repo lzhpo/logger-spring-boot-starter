@@ -74,6 +74,8 @@ _`@Logger` 注解已经支持在 IDEA 中自动 SpringEL 表达式高亮并且�
   // 可以使用纯字符串或SpringEL表达式，自由发挥
   tag = "'Create Order'"
   ```
+- prelude: 日志在业务代码执行前解析还是在执行后解析（true：执行前解析；false：执行后解析），非必须，默认为 false。若为 true，在注解中的表达式无法使用 result 变量。
+- returning: 是否需要返回业务代码执行结果，非必须，默认为true。
 - additional: 日志额外的信息，非必需，可自由发挥，支持 SpringEL 表达式。
   ```java
   // 从数据库中查询用户名称和会员等级

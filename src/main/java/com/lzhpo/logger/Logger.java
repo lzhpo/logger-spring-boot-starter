@@ -75,6 +75,25 @@ public @interface Logger {
     String tag() default LoggerConstant.EMPTY;
 
     /**
+     * The prelude means logger will resolve before execute business logic.
+     *
+     * <p>If true, will cannot use result in SpringEL expression. <br/>
+     * e.g: {@code @Logger(condition = "#result.getSuccess()", message = "xxx")}
+     *
+     * @return execution pointcut
+     */
+    boolean prelude() default false;
+
+    /**
+     * Return the result of the business method execution.
+     *
+     * <p>If not use result, can set false, the {@link LoggerEvent} will not set result.
+     *
+     * @return returning
+     */
+    boolean returning() default true;
+
+    /**
      * The logger additional information.
      *
      * @return additional

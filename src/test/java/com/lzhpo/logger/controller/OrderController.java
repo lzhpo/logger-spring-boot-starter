@@ -37,12 +37,14 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // @el(request: com.lzhpo.logger.domain.CreateOrderRequest)
+    // @el(result: com.lzhpo.logger.domain.CreateOrderResponse)
     @PostMapping
     @Logger(
             condition = "#result.getSuccess()",
             category = "'Operation Log'",
             tag = "'Create Order'",
-            businessId = "#getBusinessId(#result.orderId)",
+            businessId = "#getBusinessId(#result.getOrderId())",
             operatorId = "#findUserName(#request.getUserId())",
             message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
@@ -55,16 +57,21 @@ public class OrderController {
     // @el(result: com.lzhpo.logger.domain.ModifyOrderResponse)
     @PutMapping
     @Logger(
-            condition = "#result.getSuccess()",
             category = "'Operation Log'",
             tag = "'Modify Order'",
-            businessId = "#getBusinessId(#result.orderId)",
-            operatorId = "#findUserName(#request.getUserId())",
+            prelude = true,
+            returning = false,
+            businessId = "#request.getOrderId()",
+            operatorId = "#request.getUserId()",
             message = "#findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())",
             additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
     )
     public ModifyOrderResponse modifyOrder(@RequestBody ModifyOrderRequest request) {
-        return orderService.modifyOrder(request);
+        ModifyOrderResponse response = orderService.modifyOrder(request);
+        request.setOrderId("");
+        request.setUserId("");
+        request.setAddressId("");
+        return response;
     }
 }
 // spotless:on

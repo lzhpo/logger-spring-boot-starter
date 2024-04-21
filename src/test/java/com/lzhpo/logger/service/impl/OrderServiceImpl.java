@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Logger(message = "'I am modify order: ' + #findUserName(#request.getUserId()) ")
+    @Logger(returning = false, message = "'I am modify order: ' + #request.getUserId() ")
     public ModifyOrderResponse modifyOrder(ModifyOrderRequest request) {
         ModifyOrderResponse response = new ModifyOrderResponse();
         response.setSuccess(true);

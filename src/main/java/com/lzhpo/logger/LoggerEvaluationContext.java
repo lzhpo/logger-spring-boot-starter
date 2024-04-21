@@ -18,7 +18,6 @@ package com.lzhpo.logger;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -40,18 +39,18 @@ import org.springframework.util.ObjectUtils;
  */
 @Slf4j
 @Getter
-@NoArgsConstructor
 public class LoggerEvaluationContext extends StandardEvaluationContext {
 
-    private Method method;
-    private Object[] arguments;
-    private ParameterNameDiscoverer discoverer;
+    private final Method method;
+    private final Object[] arguments;
+    private final ParameterNameDiscoverer discoverer;
     private boolean argumentsLoaded = false;
 
-    public LoggerEvaluationContext(Object rootObject, Method method, Object[] arg, ParameterNameDiscoverer discoverer) {
+    public LoggerEvaluationContext(
+            Object rootObject, Method method, Object[] arguments, ParameterNameDiscoverer discoverer) {
         super(rootObject);
         this.method = method;
-        this.arguments = arg;
+        this.arguments = arguments;
         this.discoverer = discoverer;
     }
 

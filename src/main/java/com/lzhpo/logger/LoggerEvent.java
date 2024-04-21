@@ -71,7 +71,7 @@ public class LoggerEvent extends ApplicationEvent {
     private Date createTime;
 
     /**
-     * The business method take time (unit: milliseconds).
+     * The business method with generate log take time (unit: milliseconds).
      */
     private Long takeTime;
 

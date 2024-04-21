@@ -22,6 +22,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.Assert;
 
 /**
  * @author lzhpo
@@ -34,30 +35,24 @@ public class LoggerContextHolder {
     private static final TransmittableThreadLocal<LoggerEvaluationContext> EVALUATION_CONTEXT = new TransmittableThreadLocal<>();
 
     /**
-     * Initialize {@link #EVALUATION_CONTEXT}.
+     * Get {@link #EVALUATION_CONTEXT}.
      *
      * @param rootObject the root object
      * @param method     the method
      * @param result     the result
      * @param args       the arguments
      * @param discoverer the parameter name discoverer
-     */
-    public static void initialize(Object rootObject, Method method, Object result, Object[] args, ParameterNameDiscoverer discoverer) {
-        LoggerEvaluationContext context = new LoggerEvaluationContext(rootObject, method, args, discoverer);
-        context.setVariable(LoggerConstant.VARIABLE_RESULT, result);
-        LoggerFunctionRegistrar.registerFunction(context);
-
-        EVALUATION_CONTEXT.set(context);
-        log.debug("Initialized logger context, currently thread name: {}", Thread.currentThread().getName());
-    }
-
-    /**
-     * Get {@link #EVALUATION_CONTEXT}.
-     *
      * @return {@link LoggerEvaluationContext}
      */
-    public static LoggerEvaluationContext getContext() {
-        return Optional.ofNullable(EVALUATION_CONTEXT.get()).orElseGet(LoggerEvaluationContext::new);
+    public static LoggerEvaluationContext getContext(Object rootObject, Method method, Object result, Object[] args, ParameterNameDiscoverer discoverer) {
+        return Optional.ofNullable(EVALUATION_CONTEXT.get()).orElseGet(() -> {
+            LoggerEvaluationContext context = new LoggerEvaluationContext(rootObject, method, args, discoverer);
+            context.setVariable(LoggerConstant.VARIABLE_RESULT, result);
+            LoggerFunctionRegistrar.registerFunction(context);
+            EVALUATION_CONTEXT.set(context);
+            log.debug("The evaluation context is null, created new context, current thread name: {}", Thread.currentThread().getName());
+            return context;
+        });
     }
 
     /**
@@ -67,7 +62,8 @@ public class LoggerContextHolder {
      * @param value the variable value
      */
     public static void putVariable(String name, Object value) {
-        StandardEvaluationContext context = getContext();
+        StandardEvaluationContext context = EVALUATION_CONTEXT.get();
+        Assert.notNull(context, "The evaluation context is null");
         context.setVariable(name, value);
     }
 
@@ -78,7 +74,8 @@ public class LoggerContextHolder {
      * @return the variable value
      */
     public static Object lookupVariable(String name) {
-        StandardEvaluationContext context = getContext();
+        StandardEvaluationContext context = EVALUATION_CONTEXT.get();
+        Assert.notNull(context, "The evaluation context is null");
         return context.lookupVariable(name);
     }
 
@@ -87,7 +84,7 @@ public class LoggerContextHolder {
      */
     public static void clearContext() {
         EVALUATION_CONTEXT.remove();
-        log.debug("Cleared logger context, currently thread name: {}", Thread.currentThread().getName());
+        log.debug("Cleared evaluation context, current thread name: {}", Thread.currentThread().getName());
     }
 }
 // spotless:on

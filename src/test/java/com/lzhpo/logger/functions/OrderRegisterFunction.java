@@ -15,7 +15,6 @@
  */
 package com.lzhpo.logger.functions;
 
-import cn.hutool.crypto.digest.DigestUtil;
 import com.lzhpo.logger.LoggerComponent;
 import com.lzhpo.logger.LoggerFunction;
 
@@ -27,32 +26,32 @@ public class OrderRegisterFunction {
 
     @LoggerFunction
     public static String getBusinessId(String orderId) {
-        return DigestUtil.sha256Hex(orderId);
+        return "BusinessId_" + orderId;
     }
 
     @LoggerFunction("findUserName")
     public static String findUserName(String userId) {
-        return "小刘";
+        return "UserName_" + userId;
     }
 
     @LoggerFunction
     public static String findUserVip(String userId) {
-        return "VIP5";
+        return "UserVip_" + userId.length();
     }
 
     @LoggerFunction
     public static String findProductName(String productId) {
-        return "ABC";
+        return "ProductName_" + productId;
     }
 
     @LoggerFunction
     public static String findOldAddress(String orderId) {
-        return "Jiangxi";
+        return "OldAddress_" + orderId;
     }
 
     @LoggerFunction
     public static String findNewAddress(String addressId) {
-        return "Guangzhou";
+        return "NewAddress_" + addressId;
     }
 
     public static void test() {
