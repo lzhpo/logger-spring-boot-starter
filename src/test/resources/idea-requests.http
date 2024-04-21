@@ -1,0 +1,37 @@
+###
+PUT http://localhost:8080/test/updateAddress?
+    oldAddress={{$random.alphanumeric(8)}}&
+    newAddress={{$random.alphanumeric(8)}}
+
+###
+PUT http://localhost:8080/test/updateNewAddress?
+    newAddress={{$random.alphanumeric(8)}}
+
+###
+PUT http://localhost:8080/test/updateNewSex?
+    newSex={{$random.alphanumeric(8)}}
+
+###
+GET http://localhost:8080/test/findUserAge?
+    userId={{$random.alphanumeric(8)}}
+
+###
+GET http://localhost:8080/test/systemDate
+
+###
+POST http://localhost:8080/test/createOrder1
+Content-Type: application/json
+
+{
+  "userId": "userId-1",
+  "productId": "productId-1"
+}
+
+###
+POST http://localhost:8080/test/createOrder2
+Content-Type: application/json
+
+{
+  "userId": "userId-2",
+  "productId": "productId-2"
+}

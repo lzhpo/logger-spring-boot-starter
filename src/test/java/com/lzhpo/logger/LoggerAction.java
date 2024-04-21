@@ -18,13 +18,13 @@ package com.lzhpo.logger;
 import cn.hutool.core.util.IdUtil;
 import com.lzhpo.logger.domain.OrderRequest;
 import com.lzhpo.logger.domain.OrderResponse;
-import org.springframework.boot.test.context.TestComponent;
+import org.springframework.stereotype.Component;
 
 /**
  * @author lzhpo
  */
 // spotless:off
-@TestComponent
+@Component
 public class LoggerAction {
 
     @Logger(message = "'将地址从' + #oldAddress + '修改为' + #newAddress")

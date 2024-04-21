@@ -16,8 +16,9 @@
 package com.lzhpo.logger;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * <pre>
@@ -38,9 +39,10 @@ import org.springframework.context.event.EventListener;
  * @see org.springframework.context.ApplicationListener
  */
 @Slf4j
-@TestConfiguration
+@Configuration
 public class LoggerListenerTest {
 
+    @Async
     @EventListener
     public void process(LoggerEvent event) {
         log.info("Received LoggerEvent: {}", event);
