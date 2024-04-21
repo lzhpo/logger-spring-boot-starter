@@ -16,6 +16,7 @@
 package com.lzhpo.logger;
 
 import java.lang.annotation.*;
+import org.intellij.lang.annotations.Language;
 
 /**
  * @author lzhpo
@@ -30,6 +31,7 @@ public @interface Logger {
      *
      * @return condition
      */
+    @Language(LoggerConstant.SpEL)
     String condition() default LoggerConstant.BOOLEAN_TRUE;
 
     /**
@@ -37,6 +39,7 @@ public @interface Logger {
      *
      * @return message
      */
+    @Language(LoggerConstant.SpEL)
     String message();
 
     /**
@@ -44,6 +47,7 @@ public @interface Logger {
      *
      * @return operatorId
      */
+    @Language(LoggerConstant.SpEL)
     String operatorId() default LoggerConstant.EMPTY;
 
     /**
@@ -51,6 +55,7 @@ public @interface Logger {
      *
      * @return businessId
      */
+    @Language(LoggerConstant.SpEL)
     String businessId() default LoggerConstant.EMPTY;
 
     /**
@@ -58,6 +63,7 @@ public @interface Logger {
      *
      * @return category
      */
+    @Language(LoggerConstant.SpEL)
     String category() default LoggerConstant.EMPTY;
 
     /**
@@ -65,6 +71,7 @@ public @interface Logger {
      *
      * @return tag
      */
+    @Language(LoggerConstant.SpEL)
     String tag() default LoggerConstant.EMPTY;
 
     /**
@@ -72,5 +79,6 @@ public @interface Logger {
      *
      * @return additional
      */
+    @Language(LoggerConstant.SpEL)
     String additional() default LoggerConstant.EMPTY;
 }

@@ -17,6 +17,7 @@ package com.lzhpo.logger;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.intellij.lang.annotations.Language;
 
 /**
  * @author lzhpo
@@ -24,10 +25,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LoggerConstant {
 
+    public static final String SpEL = "SpEL";
+
+    @Language(LoggerConstant.SpEL)
     public static final String EMPTY = "";
 
+    @Language(LoggerConstant.SpEL)
     public static final String BOOLEAN_TRUE = "true";
 
+    @Language(LoggerConstant.SpEL)
     public static final String BOOLEAN_FALSE = "false";
 
     public static final String VARIABLE_RESULT = "result";

@@ -193,12 +193,7 @@ public class LoggerEventListener {
 
 #### 2.4 关于`@Logger`注解在IDEA设置SpringEL的提示
 
-在 IDEA 新增 Language Injection 规则即可：
-![](docs/images/SpringEL-IDEA-3.png)
-
-或者也可以直接导入本项目提供的xml文件：docs/IDEA SpringEL language injection for logger.xml
-![](docs/images/SpringEL-IDEA-4.png)
-![](docs/images/SpringEL-IDEA-5.png)
+`@Logger` 注解中的属性已经支持在 IDEA 中自动有 SpringEL 的提示，无需手动设置。
 
 ## 公众号
 
