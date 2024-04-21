@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.service;
+package com.lzhpo.logger;
 
-import com.lzhpo.logger.domain.CreateOrderRequest;
-import com.lzhpo.logger.domain.CreateOrderResponse;
-import com.lzhpo.logger.domain.ModifyOrderRequest;
-import com.lzhpo.logger.domain.ModifyOrderResponse;
+import org.springframework.boot.test.context.TestComponent;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author lzhpo
  */
-public interface OrderService {
+@TestComponent
+public class LoggerAction {
 
-    CreateOrderResponse createOrder(CreateOrderRequest request);
+    @Logger(message = "'将地址从' + #oldAddress + '修改为' + #newAddress")
+    public void updateAddress(@RequestParam String oldAddress, @RequestParam String newAddress) {}
 
-    ModifyOrderResponse modifyOrder(ModifyOrderRequest request);
+    @Logger(message = "'将地址从' + #oldAddress + '修改为' + #newAddress")
+    public void updateNewAddress(@RequestParam String newAddress) {
+        LoggerContextHolder.putVariable("oldAddress", "光明小区1号");
+    }
 }

@@ -152,7 +152,9 @@ public class LoggerEventListener {
 - success: 业务方法是否执行成功。
 - errors: 业务方法执行期间发生的异常。
 
-#### 2.4 关于`@Logger`注解在IDEA设置SpringEL的提示
+#### 2.4 异步监听日志事件
+
+#### 2.5 关于`@Logger`注解在IDEA设置SpringEL的提示
 
 `@Logger` 注解中的属性已经支持在 IDEA 中自动有 SpringEL 的提示，无需手动设置。
 

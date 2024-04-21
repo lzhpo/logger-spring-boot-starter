@@ -102,7 +102,9 @@ public class LoggerAspect {
 
             LoggerExpressionEvaluator evaluator = new LoggerExpressionEvaluator();
             ParameterNameDiscoverer discoverer = evaluator.getParameterNameDiscoverer();
-            LoggerEvaluationContext context = LoggerContextHolder.getContext(object, method, event.getResult(), args, discoverer);
+            LoggerElementKey elementKey = new LoggerElementKey(object, method, event.getResult(), args, discoverer);
+
+            LoggerEvaluationContext context = LoggerContextHolder.getContext(elementKey);
             if (!Boolean.parseBoolean(evalExpression(logger.condition(), event, context, evaluator))) {
                 log.debug("The resolved condition is false in @Logger.");
                 return;

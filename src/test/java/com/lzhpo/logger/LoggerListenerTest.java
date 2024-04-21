@@ -13,22 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.listener;
+package com.lzhpo.logger;
 
-import com.lzhpo.logger.LoggerEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 /**
+ * <pre>
+ * {@code
+ *     @Component
+ *     public class LoggerListener implements ApplicationListener<LoggerEvent> {
+ *
+ *         @Override
+ *         public void onApplicationEvent(LoggerEvent event) {
+ *             log.info("Received LoggerEvent: {}", event);
+ *             log.info(event.getMessage());
+ *         }
+ *     }
+ * }
+ * </pre>
+ *
  * @author lzhpo
+ * @see org.springframework.context.ApplicationListener
  */
 @Slf4j
-@Component
-public class LoggerEventListener {
+@TestConfiguration
+public class LoggerListenerTest {
 
-    @Async
     @EventListener
     public void process(LoggerEvent event) {
         log.info("Received LoggerEvent: {}", event);
