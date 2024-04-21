@@ -76,6 +76,11 @@ public class LoggerEvent extends ApplicationEvent {
     private Long takeTime;
 
     /**
+     * The logger condition.
+     */
+    private boolean condition;
+
+    /**
      * The business method execute result.
      */
     private Object result;
@@ -83,7 +88,7 @@ public class LoggerEvent extends ApplicationEvent {
     /**
      * The business method whether execute success.
      */
-    private Boolean success;
+    private boolean success;
 
     /**
      * The business method execute exception.

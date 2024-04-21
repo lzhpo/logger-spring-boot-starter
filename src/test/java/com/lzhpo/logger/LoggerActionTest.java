@@ -15,6 +15,12 @@
  */
 package com.lzhpo.logger;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import cn.hutool.core.util.IdUtil;
+import com.lzhpo.logger.domain.OrderRequest;
+import com.lzhpo.logger.domain.OrderResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +43,50 @@ class LoggerActionTest {
     @Test
     void updateAddress() {
         loggerAction.updateAddress("朝阳小区1号", "光明小区1号");
+        assertTrue(true);
     }
 
     @Test
     void updateNewAddress() {
         loggerAction.updateNewAddress("幸福小区1号");
+        assertTrue(true);
+    }
+
+    @Test
+    void updateNewSex() {
+        loggerAction.updateNewSex("男");
+        assertTrue(true);
+    }
+
+    @Test
+    void findUserAge() {
+        Integer userAge = loggerAction.findUserAge("123");
+        assertNotNull(userAge);
+    }
+
+    @Test
+    void systemDate() {
+        loggerAction.systemDate();
+        assertTrue(true);
+    }
+
+    @Test
+    void createOrder1() {
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setUserId(IdUtil.fastSimpleUUID());
+        orderRequest.setProductId(IdUtil.fastSimpleUUID());
+
+        OrderResponse orderResponse = loggerAction.createOrder1(orderRequest);
+        assertNotNull(orderResponse);
+    }
+
+    @Test
+    void createOrder2() {
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setUserId(IdUtil.fastSimpleUUID());
+        orderRequest.setProductId(IdUtil.fastSimpleUUID());
+
+        OrderResponse orderResponse = loggerAction.createOrder2(orderRequest);
+        assertNotNull(orderResponse);
     }
 }

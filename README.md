@@ -62,7 +62,7 @@ _`@Logger` 注解已经支持在 IDEA 中自动 SpringEL 表达式高亮并且�
   ```
 - businessId: 日志关联的业务编号，非必需，支持 SpringEL 表达式。
   ```java
-  businessId = "#getBusinessId(#result.orderId)"
+  businessId = "#getBusinessId(#result.getOrderId())"
   ```
 - category: 日志关联的类型，非必需，支持 SpringEL 表达式。
   ```java
@@ -84,13 +84,15 @@ _`@Logger` 注解已经支持在 IDEA 中自动 SpringEL 表达式高亮并且�
 
 简单示例演示：
 
+_详细示例可看Junit测试用例_
+
 ```java
 @PostMapping("/orders")
 @Logger(
     condition = "#result.getSuccess()",
     category = "'Operation Log'",
     tag = "'Create Order'",
-    businessId = "#getBusinessId(#result.orderId)",
+    businessId = "#getBusinessId(#result.getOrderId())",
     operatorId = "#findUserName(#request.getUserId())",
     message = "#findUserName(#request.getUserId()) + '使用' + #request.getPaymentType() + '下单了' + #findProductName(#request.getProductId()) + '产品'",
     additional = "#findUserName(#request.getUserId()) + '等级是' + #findUserVip(#request.getUserId()) + '，请求日期' + T(java.time.LocalDateTime).now()"
@@ -99,8 +101,6 @@ public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest request) 
     // ...
 }
 ```
-
-_如果不想放在controller，同样也可以将注解放在service。_
 
 #### 2.2 自定义函数注解
 

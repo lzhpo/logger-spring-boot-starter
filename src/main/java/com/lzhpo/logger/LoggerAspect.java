@@ -77,12 +77,14 @@ public class LoggerAspect {
             }
 
             LoggerContextHolder.clearContext();
-            CompletableFuture.runAsync(() -> SpringUtil.publishEvent(event))
-                    .thenRunAsync(() -> log.debug("Published LoggerEvent."))
-                    .exceptionally(e -> {
-                        log.error("Publishing LoggerEvent error: {}", e.getMessage(), e);
-                        return null;
-                    });
+            if (event.isCondition()) {
+                CompletableFuture.runAsync(() -> SpringUtil.publishEvent(event))
+                        .thenRunAsync(() -> log.debug("Published LoggerEvent."))
+                        .exceptionally(e -> {
+                            log.error("Publishing LoggerEvent error: {}", e.getMessage(), e);
+                            return null;
+                        });
+            }
         }
     }
 
@@ -103,9 +105,11 @@ public class LoggerAspect {
             LoggerExpressionEvaluator evaluator = new LoggerExpressionEvaluator();
             ParameterNameDiscoverer discoverer = evaluator.getParameterNameDiscoverer();
             LoggerElementKey elementKey = new LoggerElementKey(object, method, event.getResult(), args, discoverer);
-
             LoggerEvaluationContext context = LoggerContextHolder.getContext(elementKey);
-            if (!Boolean.parseBoolean(evalExpression(logger.condition(), event, context, evaluator))) {
+
+            boolean condition = Boolean.parseBoolean(evalExpression(logger.condition(), event, context, evaluator));
+            event.setCondition(condition);
+            if (!condition) {
                 log.debug("The resolved condition is false in @Logger.");
                 return;
             }
