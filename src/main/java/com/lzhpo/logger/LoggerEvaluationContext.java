@@ -16,71 +16,89 @@
 package com.lzhpo.logger;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.expression.AnnotatedElementKey;
-import org.springframework.context.expression.CachedExpressionEvaluator;
-import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.util.StringUtils;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.ObjectUtils;
 
 /**
+ * A method-based {@link org.springframework.expression.EvaluationContext} that
+ * provides explicit support for method-based invocations.
+ *
+ * <p>Expose the actual method arguments using the following aliases:
+ * <ol>
+ * <li>pX where X is the index of the argument (p0 for the first argument)</li>
+ * <li>aX where X is the index of the argument (a1 for the second argument)</li>
+ * <li>the name of the parameter as discovered by a configurable {@link ParameterNameDiscoverer}</li>
+ * </ol>
+ *
  * @author lzhpo
+ * @see org.springframework.context.expression.MethodBasedEvaluationContext
  */
 @Slf4j
-public class LoggerEvaluationContext extends CachedExpressionEvaluator {
+@Getter
+@NoArgsConstructor
+public class LoggerEvaluationContext extends StandardEvaluationContext {
 
-    private final Map<ExpressionKey, Expression> expressionCache = new ConcurrentHashMap<>(64);
+    private Method method;
+    private Object[] arguments;
+    private ParameterNameDiscoverer discoverer;
+    private boolean argumentsLoaded = false;
 
-    /**
-     * Get {@link Expression} of {@code expression}.
-     *
-     * @param expression the condition expression
-     * @param object     the target object
-     * @param method     the target method
-     * @return {@link Expression}
-     */
-    public Expression getExpression(String expression, Object object, Method method) {
-        AnnotatedElementKey annotatedElementKey = new AnnotatedElementKey(method, object.getClass());
-        return getExpression(expressionCache, annotatedElementKey, expression);
+    public LoggerEvaluationContext(Object rootObject, Method method, Object[] arg, ParameterNameDiscoverer discoverer) {
+        super(rootObject);
+        this.method = method;
+        this.arguments = arg;
+        this.discoverer = discoverer;
+    }
+
+    @Override
+    public Object lookupVariable(String name) {
+        Object variable = super.lookupVariable(name);
+        if (variable != null) {
+            return variable;
+        }
+        if (!this.argumentsLoaded) {
+            lazyLoadArguments();
+            this.argumentsLoaded = true;
+            variable = super.lookupVariable(name);
+        }
+        return variable;
     }
 
     /**
-     * Evaluate {@code expression} and get result value.
-     *
-     * @param expression the condition expression
-     * @param object     the target object
-     * @param method     the target method
-     * @param result     the result
-     * @param args       the args
-     * @return the evaluated result
+     * Load the param information only when needed.
      */
-    public String evalExpression(String expression, Object object, Method method, Object result, Object[] args) {
-        if (!StringUtils.hasText(expression)) {
-            return expression;
+    public void lazyLoadArguments() {
+        if (ObjectUtils.isEmpty(this.arguments)
+                || ObjectUtils.isEmpty(this.method)
+                || ObjectUtils.isEmpty(this.discoverer)) {
+            return;
         }
 
-        EvaluationContext evaluationContext = createEvalContext(object, method, result, args);
-        return getExpression(expression, object, method).getValue(evaluationContext, String.class);
-    }
+        // Expose indexed variables as well as parameter names (if discoverable)
+        String[] paramNames = this.discoverer.getParameterNames(this.method);
+        int paramCount = (paramNames != null ? paramNames.length : this.method.getParameterCount());
+        int argsCount = this.arguments.length;
 
-    /**
-     * Create registered {@link LoggerFunction}'s {@link EvaluationContext}.
-     *
-     * @param object the target object
-     * @param method the target method
-     * @param result the result
-     * @param args   the args
-     * @return {@link EvaluationContext}
-     */
-    public EvaluationContext createEvalContext(Object object, Method method, Object result, Object[] args) {
-        ParameterNameDiscoverer discoverer = getParameterNameDiscoverer();
-        MethodBasedEvaluationContext context = new MethodBasedEvaluationContext(object, method, args, discoverer);
-        context.setVariable(LoggerConstant.VARIABLE_RESULT, result);
-        LoggerFunctionRegistrar.registerFunction(context);
-        return context;
+        for (int i = 0; i < paramCount; i++) {
+            Object value = null;
+            if (argsCount > paramCount && i == paramCount - 1) {
+                // Expose remaining arguments as vararg array for last parameter
+                value = Arrays.copyOfRange(this.arguments, i, argsCount);
+            } else if (argsCount > i) {
+                // Actual argument found - otherwise left as null
+                value = this.arguments[i];
+            }
+
+            setVariable(LoggerConstant.VARIABLE_ARG_A + i, value);
+            setVariable(LoggerConstant.VARIABLE_ARG_P + i, value);
+            if (paramNames != null && paramNames[i] != null) {
+                setVariable(paramNames[i], value);
+            }
+        }
     }
 }

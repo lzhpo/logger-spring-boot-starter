@@ -28,6 +28,7 @@
         <spotless-plugin.version>2.30.0</spotless-plugin.version>
         <flatten-maven-plugin>1.6.0</flatten-maven-plugin>
         <hutool.version>5.8.27</hutool.version>
+        <alibaba-threadlocal.version>2.14.5</alibaba-threadlocal.version>
     </properties>
 
     <dependencies>
@@ -56,6 +57,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>${alibaba-threadlocal.version}</version>
         </dependency>
     </dependencies>
 
