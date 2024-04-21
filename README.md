@@ -53,7 +53,7 @@
   // 从数据库中查询用户名称和地址，结果示例：小刘将地址从Jiangxi修改为Guangzhou
   message = "#findUserName(#request.getUserId()) + '将地址从' + #findOldAddress(#request.getOrderId()) + '修改为' + #findNewAddress(#request.getAddressId())"
   ```
-- operatorId: 日志关联的操作人，非必需，支持 SpringEL 表达式。
+- operatorId: 日志关联的操作人，非必需，支持 SpringEL 表达式。也可以实现`OperatorAware`接口的`getCurrentOperatorId`方法进行获取。 如果既在注解传入了operatorId，又实现了`OperatorAware`接口，则优先取注解中的。
   ```java
   // 从数据库中查询用户名称
   operatorId = "#findUserName(#request.getUserId())"
@@ -190,6 +190,15 @@ public class LoggerEventListener {
 - result: 业务方法执行结果。
 - success: 业务方法是否执行成功。
 - errors: 业务方法执行期间发生的异常。
+
+#### 2.4 关于`@Logger`注解在IDEA设置SpringEL的提示
+
+在 IDEA 新增 Language Injection 规则即可：
+![](docs/images/SpringEL-IDEA-3.png)
+
+或者也可以直接导入本项目提供的xml文件：docs/IDEA SpringEL language injection for logger.xml
+![](docs/images/SpringEL-IDEA-4.png)
+![](docs/images/SpringEL-IDEA-5.png)
 
 ## 公众号
 

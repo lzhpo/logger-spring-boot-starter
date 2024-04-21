@@ -1,0 +1,13 @@
+<LanguageInjectionConfiguration>
+  <injection language="SpEL" injector-id="java">
+    <display-name>Logger (com.lzhpo.logger)</display-name>
+    <single-file value="true" />
+    <place><![CDATA[psiMethod().withName("additional").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("businessId").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("category").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("condition").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("message").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("operatorId").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+    <place><![CDATA[psiMethod().withName("tag").withParameters().definedInClass("com.lzhpo.logger.Logger")]]></place>
+  </injection>
+</LanguageInjectionConfiguration>
