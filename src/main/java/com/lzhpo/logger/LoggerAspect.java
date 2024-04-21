@@ -80,8 +80,9 @@ public class LoggerAspect {
     /**
      * Resolve {@link Logger} annotation and publish {@link LoggerEvent}.
      *
-     * @param logger {@link Logger}
-     * @param event  {@link LoggerEvent}
+     * @param logger    {@link Logger}
+     * @param event     {@link LoggerEvent}
+     * @param evaluator {@link LoggerExpressionEvaluator}
      */
     private void resolveLogger(Logger logger, LoggerEvent event, LoggerExpressionEvaluator evaluator) {
         try {
