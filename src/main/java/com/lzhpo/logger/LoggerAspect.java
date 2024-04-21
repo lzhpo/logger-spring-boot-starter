@@ -37,6 +37,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author lzhpo
  */
+// spotless:off
 @Slf4j
 @Aspect
 @Component
@@ -101,8 +102,7 @@ public class LoggerAspect {
 
             LoggerExpressionEvaluator evaluator = new LoggerExpressionEvaluator();
             ParameterNameDiscoverer discoverer = evaluator.getParameterNameDiscoverer();
-            LoggerEvaluationContext context =
-                    LoggerContextHolder.getContext(object, method, event.getResult(), args, discoverer);
+            LoggerEvaluationContext context = LoggerContextHolder.getContext(object, method, event.getResult(), args, discoverer);
             if (!Boolean.parseBoolean(evalExpression(logger.condition(), event, context, evaluator))) {
                 log.debug("The resolved condition is false in @Logger.");
                 return;
@@ -133,7 +133,6 @@ public class LoggerAspect {
      * @param evaluator  the logger expression evaluator
      * @return the operatorId
      */
-    // spotless:off
     private String getOperatorId(String operatorId, LoggerEvent event, LoggerEvaluationContext context, LoggerExpressionEvaluator evaluator) {
         return Optional.ofNullable(operatorId)
                 .filter(StringUtils::hasText)
@@ -164,5 +163,5 @@ public class LoggerAspect {
             return expression;
         }
     }
-    // spotless:on
 }
+// spotless:on
