@@ -23,6 +23,7 @@ import org.springframework.core.ParameterNameDiscoverer;
 /**
  * @author lzhpo
  */
+// spotless:off
 @Getter
 public class LoggerElementKey {
 
@@ -32,14 +33,12 @@ public class LoggerElementKey {
     private final Object[] arguments;
     private final ParameterNameDiscoverer discoverer;
 
-    public LoggerElementKey(
-            Object rootObject, Method method, Object result, Object[] arguments, ParameterNameDiscoverer discoverer) {
+    public LoggerElementKey(Object rootObject, Method method, Object result, Object[] arguments, ParameterNameDiscoverer discoverer) {
         this.arguments = arguments;
         this.result = result;
-        this.rootObject =
-                Optional.ofNullable(rootObject).orElseThrow(() -> new IllegalArgumentException("rootObject is null"));
         this.method = Optional.ofNullable(method).orElseThrow(() -> new IllegalArgumentException("method is null"));
-        this.discoverer =
-                Optional.ofNullable(discoverer).orElseThrow(() -> new IllegalArgumentException("discoverer is null"));
+        this.rootObject = Optional.ofNullable(rootObject).orElseThrow(() -> new IllegalArgumentException("rootObject is null"));
+        this.discoverer = Optional.ofNullable(discoverer).orElseThrow(() -> new IllegalArgumentException("discoverer is null"));
     }
 }
+// spotless:on
