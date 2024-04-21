@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author lzhpo
  */
+// spotless:off
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +37,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // spotless:off
     @PostMapping
     @Logger(
             condition = "#result.getSuccess()",
@@ -51,6 +51,8 @@ public class OrderController {
         return orderService.createOrder(request);
     }
 
+    // @el(request: com.lzhpo.logger.domain.ModifyOrderRequest)
+    // @el(result: com.lzhpo.logger.domain.ModifyOrderResponse)
     @PutMapping
     @Logger(
             condition = "#result.getSuccess()",
@@ -64,5 +66,5 @@ public class OrderController {
     public ModifyOrderResponse modifyOrder(@RequestBody ModifyOrderRequest request) {
         return orderService.modifyOrder(request);
     }
-    // spotless:on
 }
+// spotless:on
