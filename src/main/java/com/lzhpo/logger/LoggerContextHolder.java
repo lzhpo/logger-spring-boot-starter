@@ -38,6 +38,7 @@ public class LoggerContextHolder {
      *
      * @param rootObject the root object
      * @param method     the method
+     * @param result     the result
      * @param args       the arguments
      * @param discoverer the parameter name discoverer
      */
