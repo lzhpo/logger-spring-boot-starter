@@ -56,7 +56,7 @@ public class LoggerContextHolder {
      *
      * @return {@link LoggerEvaluationContext}
      */
-    public LoggerEvaluationContext getContext() {
+    public static LoggerEvaluationContext getContext() {
         return Optional.ofNullable(EVALUATION_CONTEXT.get()).orElseGet(LoggerEvaluationContext::new);
     }
 
@@ -66,7 +66,7 @@ public class LoggerContextHolder {
      * @param name  the variable name
      * @param value the variable value
      */
-    public void putVariable(String name, Object value) {
+    public static void putVariable(String name, Object value) {
         StandardEvaluationContext context = getContext();
         context.setVariable(name, value);
     }
@@ -77,7 +77,7 @@ public class LoggerContextHolder {
      * @param name the variable name
      * @return the variable value
      */
-    public Object lookupVariable(String name) {
+    public static Object lookupVariable(String name) {
         StandardEvaluationContext context = getContext();
         return context.lookupVariable(name);
     }
