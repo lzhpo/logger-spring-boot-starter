@@ -39,6 +39,8 @@
 
 #### 2.1 `@Logger`注解
 
+_`@Logger` 注解已经支持在 IDEA 中自动 SpringEL 表达式高亮并且自动提示。_
+
 `@Logger`注解解释：
 - condition: 生成日志的条件，非必需，true 或 false，支持 SpringEL 表达式。
   ```java
