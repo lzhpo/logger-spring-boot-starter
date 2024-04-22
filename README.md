@@ -1,5 +1,5 @@
 ![](https://img.shields.io/badge/JDK-1.8+-success.svg)
-![](https://maven-badges.herokuapp.com/maven-central/com.lzhpo/logger/badge.svg?color=blueviolet)
+![](https://maven-badges.herokuapp.com/maven-central/com.lzhpo/logger-spring-boot-starter/badge.svg?color=blueviolet)
 ![](https://img.shields.io/:license-Apache2-orange.svg)
 [![Style check](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml/badge.svg)](https://github.com/lzhpo/logger-spring-boot-starter/actions/workflows/style-check.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/b7b948873ebf40b4be396fe7f0483a97)](https://app.codacy.com/gh/lzhpo/logger-spring-boot-starter/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
