@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
+import com.lzhpo.logger.diff.DiffNestedOrderRequest;
 import com.lzhpo.logger.domain.OrderRequest;
 import com.lzhpo.logger.domain.OrderResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -89,4 +91,53 @@ class LoggerActionServiceTest {
         OrderResponse orderResponse = loggerAction.createOrder2(orderRequest);
         assertNotNull(orderResponse);
     }
+
+    @Test
+    void updateAddressDiff() {
+        loggerAction.updateAddressDiff("朝阳小区1号", "光明小区1号");
+        assertTrue(true);
+    }
+
+    // spotless:off
+    @Test
+    void createOrderDiff1() {
+        String userId = IdUtil.fastSimpleUUID();
+        String productId = IdUtil.fastSimpleUUID();
+        String address = RandomUtil.randomString(6);
+
+        loggerAction.createOrderDiff1(new OrderRequest(userId, productId, address), new OrderRequest(userId, productId, address));
+        loggerAction.createOrderDiff1(new OrderRequest(null, productId, address), new OrderRequest(userId, productId, address));
+        loggerAction.createOrderDiff1(new OrderRequest(userId, productId, address), new OrderRequest(null, productId, address));
+        loggerAction.createOrderDiff1(new OrderRequest(userId, null, address), new OrderRequest(null, productId, address));
+        loggerAction.createOrderDiff1(new OrderRequest(userId, productId, address), new OrderRequest(IdUtil.fastSimpleUUID(), IdUtil.fastSimpleUUID(), RandomUtil.randomString(6)));
+
+        assertTrue(true);
+    }
+
+
+    @Test
+    void createOrderDiff2() {
+        String userId = IdUtil.fastSimpleUUID();
+        String productId = IdUtil.fastSimpleUUID();
+        String address = RandomUtil.randomString(6);
+
+        loggerAction.createOrderDiff2(
+                new DiffNestedOrderRequest(new OrderRequest(userId, productId, address)),
+                new DiffNestedOrderRequest(new OrderRequest(userId, productId, address)));
+
+        loggerAction.createOrderDiff2(
+                new DiffNestedOrderRequest(new OrderRequest(null, productId, address)),
+                new DiffNestedOrderRequest(new OrderRequest(userId, productId, address)));
+
+        loggerAction.createOrderDiff2(
+                new DiffNestedOrderRequest(new OrderRequest(userId, productId, address)),
+                new DiffNestedOrderRequest(new OrderRequest(null, productId, address)));
+
+        loggerAction.createOrderDiff2(
+                new DiffNestedOrderRequest(new OrderRequest(userId, null, address)),
+                new DiffNestedOrderRequest(new OrderRequest(null, productId, address)));
+
+        assertTrue(true);
+    }
+    // spotless:on
 }

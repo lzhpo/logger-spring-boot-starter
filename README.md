@@ -119,7 +119,36 @@ public class OrderRegisterFunction {
 }
 ```
 
-#### 2.3 异步监听日志事件
+#### 2.3 对象 diff
+
+对象 diff 的意思就是给两个对象，找出它们的区别。
+
+示例：
+```java
+// 对比 oldAddress 和 newAddress
+@Logger(message = "#DIFF(#oldAddress, #newAddress)")
+public void updateAddressDiff(String oldAddress, String newAddress) {
+    // NOP
+}
+
+// 对比 request1 和 request2
+@Logger(message = "#DIFF(#request1, #request2)")
+public void createOrderDiff1(OrderRequest request1, OrderRequest request2) {
+    // NOP
+}
+```
+
+其中，`DIFF` 是内置的函数，它会返回字符串形式的 diff 结果，如有多个 diff 结果将用指定的字符进行分隔。
+
+支持自定义模板和分隔符：
+```yml
+logger:
+  diff:
+    delimiter: ", "
+    template: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"
+```
+
+#### 2.4 异步监听日志事件
 
 日志解析完毕之后会发布一个 `LoggerEvent` 事件，可以自定义 Listener 进行处理。
 
@@ -151,8 +180,7 @@ public class LoggerEventListener {
 - result: 业务方法执行结果。
 - success: 业务方法是否执行成功。
 - errors: 业务方法执行期间发生的异常。
-
-#### 2.4 异步监听日志事件
+- diffResults: 对象diff的结果。
 
 #### 2.5 关于`@Logger`注解在IDEA设置SpringEL的提示
 

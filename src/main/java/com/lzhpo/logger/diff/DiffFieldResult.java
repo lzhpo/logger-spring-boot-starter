@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.diff;
 
-import cn.hutool.core.util.StrUtil;
-import java.lang.annotation.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * The logger function annotation, must be used on static methods.
- *
  * @author lzhpo
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface LoggerFunction {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DiffFieldResult {
 
-    /**
-     * The register function name, will get method name if empty.
-     *
-     * @return function name
-     */
-    String value() default StrUtil.EMPTY;
+    private String fieldName;
+    private Object oldValue;
+    private Object newValue;
 }

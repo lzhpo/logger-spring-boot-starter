@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.context;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.lzhpo.logger.LoggerConstant;
+import com.lzhpo.logger.LoggerFunctionRegistrar;
+import com.lzhpo.logger.diff.DiffObjectResult;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +32,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @UtilityClass
+// spotless:off
 public class LoggerContextHolder {
 
-    private static final TransmittableThreadLocal<LoggerEvaluationContext> EVALUATION_CONTEXT =
-            new TransmittableThreadLocal<>();
+    private static final TransmittableThreadLocal<LoggerEvaluationContext> EVALUATION_CONTEXT = new TransmittableThreadLocal<>();
+    private static final TransmittableThreadLocal<List<DiffObjectResult>> DIFF_OBJECT_CONTEXT = new TransmittableThreadLocal<>();
 
     /**
      * Get {@link #EVALUATION_CONTEXT}.
@@ -47,8 +54,7 @@ public class LoggerContextHolder {
                     LoggerEvaluationContext context = new LoggerEvaluationContext();
                     initializeIfNecessary(elementKey, context);
                     EVALUATION_CONTEXT.set(context);
-                    log.debug(
-                            "[{}] Created new context.", Thread.currentThread().getName());
+                    log.debug("Created new context, current thread name: {}", Thread.currentThread().getName());
                     return context;
                 });
     }
@@ -72,6 +78,28 @@ public class LoggerContextHolder {
         LoggerEvaluationContext context = getContext();
         context.setVariable(name, value);
         EVALUATION_CONTEXT.set(context);
+        log.debug("Put {} variable, current thread name: {}", name, Thread.currentThread().getName());
+    }
+
+    /**
+     * Set diff object result.
+     *
+     * @param diffObjectResult the diff object result
+     */
+    public static void putDiffResult(DiffObjectResult diffObjectResult) {
+        List<DiffObjectResult> diffResults = getDiffResults();
+        Collections.addAll(diffResults, diffObjectResult);
+        DIFF_OBJECT_CONTEXT.set(diffResults);
+        log.debug("Put 1 diff result, total has {} diff results, current thread name: {}", diffResults.size(), Thread.currentThread().getName());
+    }
+
+    /**
+     * Get diff object result.
+     *
+     * @return the diff object result
+     */
+    public static List<DiffObjectResult> getDiffResults() {
+        return Optional.ofNullable(DIFF_OBJECT_CONTEXT.get()).orElseGet(ArrayList::new);
     }
 
     /**
@@ -89,7 +117,8 @@ public class LoggerContextHolder {
      */
     public static void clearContext() {
         EVALUATION_CONTEXT.remove();
-        log.debug("[{}] Cleared evaluation context.", Thread.currentThread().getName());
+        DIFF_OBJECT_CONTEXT.remove();
+        log.debug("Cleared context, current thread name: {}", Thread.currentThread().getName());
     }
 
     /**
@@ -106,7 +135,8 @@ public class LoggerContextHolder {
             context.setDiscoverer(elementKey.getDiscoverer());
             context.setVariable(LoggerConstant.VARIABLE_RESULT, elementKey.getResult());
             LoggerFunctionRegistrar.registerFunction(context);
-            log.debug("The context has null fields, already initialized.");
+            log.debug("The context has null fields, initialized, current thread name: {}", Thread.currentThread().getName());
         }
     }
 }
+// spotless:on

@@ -15,14 +15,19 @@
  */
 package com.lzhpo.logger.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author lzhpo
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderRequest {
 
     private String userId;
     private String productId;
+    private String address;
 }

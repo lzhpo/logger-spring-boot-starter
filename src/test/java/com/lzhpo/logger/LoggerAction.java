@@ -16,6 +16,11 @@
 package com.lzhpo.logger;
 
 import cn.hutool.core.util.IdUtil;
+import com.lzhpo.logger.annotation.Logger;
+import com.lzhpo.logger.annotation.LoggerComponent;
+import com.lzhpo.logger.annotation.LoggerFunction;
+import com.lzhpo.logger.context.LoggerContextHolder;
+import com.lzhpo.logger.diff.DiffNestedOrderRequest;
 import com.lzhpo.logger.domain.OrderRequest;
 import com.lzhpo.logger.domain.OrderResponse;
 import org.springframework.stereotype.Component;
@@ -69,6 +74,21 @@ public class LoggerAction {
                 .userId(request.getUserId())
                 .productId(request.getProductId())
                 .build();
+    }
+
+    @Logger(message = "#DIFF(#oldAddress, #newAddress)")
+    public void updateAddressDiff(String oldAddress, String newAddress) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#request1, #request2)")
+    public void createOrderDiff1(OrderRequest request1, OrderRequest request2) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#request1, #request2)")
+    public void createOrderDiff2(DiffNestedOrderRequest request1, DiffNestedOrderRequest request2) {
+        // NOP
     }
 
     @LoggerComponent

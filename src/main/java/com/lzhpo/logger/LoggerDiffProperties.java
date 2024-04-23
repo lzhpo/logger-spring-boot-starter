@@ -15,19 +15,26 @@
  */
 package com.lzhpo.logger;
 
-import com.lzhpo.logger.annotation.Logger;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * The diff configurations.
+ *
  * @author lzhpo
  */
-public interface OperatorAware {
+@Data
+@ConfigurationProperties(prefix = "logger.diff")
+public class LoggerDiffProperties {
 
     /**
-     * Get current operatorId.
-     *
-     * <p><b>Prioritize use of {@link Logger#operatorId()}</b>
-     *
-     * @return operatorId
+     * The diff format message template.
+     * <p>Allowed placeholders: {filedName}, {oldValue}, {newValue}
      */
-    String getCurrentOperatorId();
+    private String template = LoggerConstant.DIFF_MESSAGE_TEMPLATE;
+
+    /**
+     * The diff format message delimiter if it has multiple diff results.
+     */
+    private String delimiter = LoggerConstant.DIFF_MESSAGE_DELIMITER;
 }

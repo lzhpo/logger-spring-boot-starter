@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.diff;
 
-import com.lzhpo.logger.annotation.Logger;
+import java.util.List;
+import lombok.Data;
 
 /**
  * @author lzhpo
  */
-public interface OperatorAware {
+@Data
+public class DiffObjectResult {
 
-    /**
-     * Get current operatorId.
-     *
-     * <p><b>Prioritize use of {@link Logger#operatorId()}</b>
-     *
-     * @return operatorId
-     */
-    String getCurrentOperatorId();
+    private String oldObjectName;
+    private String newObjectName;
+    private List<DiffFieldResult> fieldResults;
 }

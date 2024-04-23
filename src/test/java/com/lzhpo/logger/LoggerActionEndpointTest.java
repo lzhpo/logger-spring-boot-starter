@@ -40,6 +40,11 @@ public class LoggerActionEndpointTest {
         loggerAction.updateNewAddress(newAddress);
     }
 
+    @PutMapping("/updateAddressDiff")
+    public void updateAddressDiff(@RequestParam String oldAddress, @RequestParam String newAddress) {
+        loggerAction.updateAddressDiff(oldAddress, newAddress);
+    }
+
     @PutMapping("/updateNewSex")
     public void updateNewSex(@RequestParam String newSex) {
         loggerAction.updateNewSex(newSex);

@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.annotation;
 
-import com.lzhpo.logger.annotation.Logger;
+import cn.hutool.core.util.StrUtil;
+import java.lang.annotation.*;
 
 /**
+ * The logger function annotation, must be used on static methods.
+ *
  * @author lzhpo
  */
-public interface OperatorAware {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface LoggerFunction {
 
     /**
-     * Get current operatorId.
+     * The register function name, will get method name if empty.
      *
-     * <p><b>Prioritize use of {@link Logger#operatorId()}</b>
-     *
-     * @return operatorId
+     * @return function name
      */
-    String getCurrentOperatorId();
+    String value() default StrUtil.EMPTY;
 }

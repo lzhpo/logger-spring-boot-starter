@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.annotation;
 
+import com.lzhpo.logger.LoggerConstant;
 import java.lang.annotation.*;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
