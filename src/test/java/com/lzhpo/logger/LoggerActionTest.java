@@ -91,10 +91,19 @@ class LoggerActionTest {
 
     @Test
     void userDiff() {
-        User oldUser = User.builder().username("Jack").age(22).phone("123456").build();
+        User oldUser = User.builder()
+                .username("Jack")
+                .age(22)
+                .phone("123456")
+                .status("P")
+                .build();
 
-        User newUser =
-                User.builder().username("Jack").age(23).email("jack@gmail.com").build();
+        User newUser = User.builder()
+                .username("Jack")
+                .age(23)
+                .email("jack@gmail.com")
+                .status("P")
+                .build();
 
         loggerAction.userDiff(oldUser, newUser);
 
