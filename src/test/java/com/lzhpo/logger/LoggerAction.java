@@ -22,6 +22,7 @@ import com.lzhpo.logger.context.LoggerContextHolder;
 import com.lzhpo.logger.domain.Admin;
 import com.lzhpo.logger.domain.User;
 import com.lzhpo.logger.domain.UserWithDisabledField;
+import com.lzhpo.logger.domain.UserWithDisabledObject;
 import org.springframework.stereotype.Component;
 
 /**
@@ -72,6 +73,11 @@ public class LoggerAction {
 
     @Logger(message = "#DIFF(#oldUser, #newUser)")
     public void userWithDisabledFieldDiff(UserWithDisabledField oldUser, UserWithDisabledField newUser) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userWithDisabledObjectDiff(UserWithDisabledObject oldUser, UserWithDisabledObject newUser) {
         // NOP
     }
 

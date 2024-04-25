@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.lzhpo.logger.domain.Admin;
 import com.lzhpo.logger.domain.User;
 import com.lzhpo.logger.domain.UserWithDisabledField;
+import com.lzhpo.logger.domain.UserWithDisabledObject;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -158,5 +159,31 @@ class LoggerActionTest {
         assertTrue(message.contains("[age] has been updated from [22] to [23]"));
         assertTrue(message.contains("[email] has been updated from [] to [jack@gmail.com]"));
         assertTrue(message.contains("[phone] has been updated from [123456] to []"));
+    }
+
+    @Test
+    void userWithDisabledObjectDiff() {
+        UserWithDisabledObject oldUser = UserWithDisabledObject.builder()
+                .username("Jack")
+                .age(22)
+                .email("rose@gmail.com")
+                .phone("123456")
+                .build();
+
+        UserWithDisabledObject newUser = UserWithDisabledObject.builder()
+                .username("Rose")
+                .age(23)
+                .email("rose@gmail.com")
+                .phone("456789")
+                .build();
+
+        loggerAction.userWithDisabledObjectDiff(oldUser, newUser);
+
+        String message = LoggerTestSupport.getMessage();
+        assertFalse(StringUtils.hasText(message));
+        assertFalse(message.contains("[username] has been updated from [Jack] to [Rose]"));
+        assertFalse(message.contains("[age] has been updated from [22] to [23]"));
+        assertFalse(message.contains("[email] has been updated from [rose@gmail.com] to [jack@gmail.com]"));
+        assertFalse(message.contains("[phone] has been updated from [123456] to [456789]"));
     }
 }
