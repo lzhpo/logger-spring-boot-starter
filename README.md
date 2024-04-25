@@ -224,9 +224,9 @@ public class UserWithTitle {
 
 `@Logger` 注解中的属性已经支持在 IDEA 中自动高亮显示，并且有 SpringEL 的提示。
 
-![](docs/images/SpringEL-IDEA-6.png)
-
 ![](docs/images/SpringEL-IDEA-7.png)
+
+![](docs/images/SpringEL-IDEA-6.png)
 
 ## 公众号
 
