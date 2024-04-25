@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.domain;
 
-import com.lzhpo.logger.annotation.Logger;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author lzhpo
  */
-public interface OperatorAware {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
 
-    /**
-     * Get current operatorId.
-     *
-     * <p><b>Prioritize use of {@link Logger#operatorId()}</b>
-     *
-     * @return operatorId
-     */
-    String getCurrentOperatorId();
+    private String username;
+    private Integer age;
+    private String email;
+    private String phone;
+    private String status;
 }

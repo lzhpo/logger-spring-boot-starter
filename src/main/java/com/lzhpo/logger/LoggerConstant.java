@@ -41,4 +41,12 @@ public final class LoggerConstant {
     public static final String VARIABLE_ARG_A = "a";
 
     public static final String VARIABLE_ARG_P = "p";
+
+    public static final String FUNCTION_DIFF = "DIFF";
+
+    public static final String DIFF_MESSAGE_DELIMITER = ", ";
+
+    // spotless:off
+    public static final String DIFF_MESSAGE_TEMPLATE = "[{filedName}] has been updated from [{oldValue}] to [{newValue}]";
+    // spotless:on
 }

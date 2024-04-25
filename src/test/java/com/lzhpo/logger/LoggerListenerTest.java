@@ -47,5 +47,6 @@ public class LoggerListenerTest {
     public void process(LoggerEvent event) {
         log.info("Received LoggerEvent: {}", event);
         log.info(event.getMessage());
+        LoggerTestSupport.setLoggerEvent(event);
     }
 }

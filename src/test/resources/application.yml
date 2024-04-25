@@ -1,3 +1,7 @@
 logging:
   level:
     com.lzhpo: debug
+logger:
+  diff:
+    delimiter: "; "
+    template: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"

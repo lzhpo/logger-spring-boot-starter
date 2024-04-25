@@ -15,23 +15,28 @@
  */
 package com.lzhpo.logger;
 
-import cn.hutool.core.util.StrUtil;
-import java.lang.annotation.*;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 /**
- * The logger function annotation, must be used on static methods.
- *
  * @author lzhpo
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface LoggerFunction {
+@UtilityClass
+public class LoggerTestSupport {
 
-    /**
-     * The register function name, will get method name if empty.
-     *
-     * @return function name
-     */
-    String value() default StrUtil.EMPTY;
+    private static LoggerEvent loggerEvent;
+
+    public static void setLoggerEvent(LoggerEvent diffResults) {
+        LoggerTestSupport.loggerEvent = diffResults;
+    }
+
+    @SneakyThrows
+    public static LoggerEvent getLoggerEvent() {
+        Thread.sleep(200);
+        return loggerEvent;
+    }
+
+    public static String getMessage() {
+        return getLoggerEvent().getMessage();
+    }
 }

@@ -15,9 +15,11 @@
  */
 package com.lzhpo.logger;
 
-import cn.hutool.core.util.IdUtil;
-import com.lzhpo.logger.domain.OrderRequest;
-import com.lzhpo.logger.domain.OrderResponse;
+import com.lzhpo.logger.annotation.Logger;
+import com.lzhpo.logger.annotation.LoggerComponent;
+import com.lzhpo.logger.annotation.LoggerFunction;
+import com.lzhpo.logger.context.LoggerContextHolder;
+import com.lzhpo.logger.domain.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -51,24 +53,34 @@ public class LoggerAction {
         // NOP
     }
 
-    @Logger(condition = "#result.isSuccess()", message = "'用户' + #findUserName(#request.getUserId()) + '下单了' + #findProductName(#request.getProductId())")
-    public OrderResponse createOrder1(OrderRequest request) {
-        return OrderResponse.builder()
-                .success(true)
-                .orderId(IdUtil.fastSimpleUUID())
-                .userId(request.getUserId())
-                .productId(request.getProductId())
-                .build();
+    @Logger(message = "#DIFF(#oldAddress, #newAddress)")
+    public void updateAddressDiff(String oldAddress, String newAddress) {
+        // NOP
     }
 
-    @Logger(condition = "#result.isSuccess()", message = "'用户' + #findUserName(#request.getUserId()) + '下单了' + #findProductName(#request.getProductId())")
-    public OrderResponse createOrder2(OrderRequest request) {
-        return OrderResponse.builder()
-                .success(false)
-                .orderId(IdUtil.fastSimpleUUID())
-                .userId(request.getUserId())
-                .productId(request.getProductId())
-                .build();
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userDiff(User oldUser, User newUser) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#admin, #user)")
+    public void adminUserDiff(Admin admin, User user) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userWithDisabledFieldDiff(UserWithDisabledField oldUser, UserWithDisabledField newUser) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userWithDisabledObjectDiff(UserWithDisabledObject oldUser, UserWithDisabledObject newUser) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userWithTitleDiff(UserWithTitle oldUser, UserWithTitle newUser) {
+        // NOP
     }
 
     @LoggerComponent

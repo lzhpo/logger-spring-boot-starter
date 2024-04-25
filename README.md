@@ -151,8 +151,74 @@ public class LoggerEventListener {
 - result: 业务方法执行结果。
 - success: 业务方法是否执行成功。
 - errors: 业务方法执行期间发生的异常。
+- diffResults: 对象diff的结果。
 
-#### 2.4 异步监听日志事件
+#### 2.4 对象 diff
+
+对象 diff 的意思就是给两个对象，找出它们的区别。
+
+示例：
+```java
+// 相同对象diff
+@Logger(message = "#DIFF(#oldUser, #newUser)")
+public void userDiff(User oldUser, User newUser) {
+    // NOP
+}
+
+// 不同对象diff
+@Logger(message = "#DIFF(#admin, #user)")
+public void adminUserDiff(Admin admin, User user) {
+  // NOP
+}
+```
+
+其中，`DIFF` 是内置的函数，它会返回字符串形式的 diff 格式化结果，如有多个 diff 结果可设置指定的字符进行分隔。
+`DIFF` 的结果会放在 `LoggerEvent` 的 `diffResults` 字段，可以在 `LoggerEvent` 的监听器里面进行处理。
+
+支持自定义模板和分隔符：
+```yml
+logger:
+  diff:
+    delimiter: ", "
+    template: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"
+```
+
+同时 diff 也支持排除指定对象或字段，或者设置 diff 字段的标题。
+
+```java
+// 排除此对象diff
+@LoggerDiffObject(disabled = true)
+public class UserWithDisabledObject {
+
+    private String username;
+    
+    private String email;
+}
+```
+
+```java
+public class UserWithDisabledField {
+
+    // 排除此字段diff
+    @LoggerDiffField(disabled = true)
+    private String username;
+    
+    private String email;
+}
+```
+
+```java
+public class UserWithTitle {
+
+    // 设置字段的标题
+    @LoggerDiffField(title = "用户名称")
+    private String username;
+
+    // 设置字段的标题
+    @LoggerDiffField(title = "用户年龄")
+    private Integer age;
+}
+```
 
 #### 2.5 关于`@Logger`注解在IDEA设置SpringEL的提示
 

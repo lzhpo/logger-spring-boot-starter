@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.annotation;
 
-import com.lzhpo.logger.annotation.Logger;
+import java.lang.annotation.*;
 
 /**
  * @author lzhpo
  */
-public interface OperatorAware {
+@Documented
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LoggerDiffObject {
 
     /**
-     * Get current operatorId.
+     * Disable this object to diff.
      *
-     * <p><b>Prioritize use of {@link Logger#operatorId()}</b>
-     *
-     * @return operatorId
+     * @return whether disable
      */
-    String getCurrentOperatorId();
+    boolean disabled() default false;
 }

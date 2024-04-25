@@ -17,6 +17,11 @@ package com.lzhpo.logger;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.lzhpo.logger.annotation.Logger;
+import com.lzhpo.logger.context.LoggerContextHolder;
+import com.lzhpo.logger.context.LoggerElementKey;
+import com.lzhpo.logger.context.LoggerEvaluationContext;
+import com.lzhpo.logger.context.LoggerExpressionEvaluator;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,6 +131,7 @@ public class LoggerAspect {
             log.error("Resolve @Logger error: {}", e.getMessage(), e);
             event.getErrors().add(e);
         } finally {
+            event.setDiffResults(LoggerContextHolder.getDiffResults());
             event.setTakeTime(System.currentTimeMillis() - event.getCreateTime().getTime());
         }
     }

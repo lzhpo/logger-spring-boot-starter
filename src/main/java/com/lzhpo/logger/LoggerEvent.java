@@ -15,6 +15,7 @@
  */
 package com.lzhpo.logger;
 
+import com.lzhpo.logger.diff.DiffObjectResult;
 import java.util.Date;
 import java.util.List;
 import lombok.Getter;
@@ -94,6 +95,11 @@ public class LoggerEvent extends ApplicationEvent {
      * The business method execute exception.
      */
     private List<Exception> errors;
+
+    /**
+     * The diff object results.
+     */
+    private List<DiffObjectResult> diffResults;
 
     public LoggerEvent(Object source) {
         super(source);

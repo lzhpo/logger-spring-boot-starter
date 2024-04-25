@@ -16,11 +16,13 @@
 package com.lzhpo.logger;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 /**
  * @author lzhpo
  */
 @AutoConfiguration
+@EnableConfigurationProperties({LoggerDiffProperties.class})
 @Import({LoggerFunctionRegistrar.class, LoggerAspect.class})
 public class LoggerAutoConfiguration {}

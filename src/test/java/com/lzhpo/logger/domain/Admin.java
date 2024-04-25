@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.domain;
 
-import java.lang.annotation.*;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * Mark this bean is for logger component.
- *
  * @author lzhpo
  */
-@Component
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface LoggerComponent {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Admin {
 
-    /**
-     * Same with {@link Component}.
-     *
-     * @return the bean name
-     */
-    @AliasFor(annotation = Component.class)
-    String value() default LoggerConstant.EMPTY;
+    private String username;
+    private Integer age;
+    private String email;
+    private String phone;
+    private String role;
 }

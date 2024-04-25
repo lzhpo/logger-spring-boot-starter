@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.domain;
+package com.lzhpo.logger.annotation;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.lzhpo.logger.LoggerConstant;
+import java.lang.annotation.*;
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.stereotype.Component;
 
 /**
+ * Mark this bean is for logger component.
+ *
  * @author lzhpo
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderResponse {
+@Component
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LoggerComponent {
 
-    private boolean success;
-    private String orderId;
-    private String userId;
-    private String productId;
+    /**
+     * Same with {@link Component}.
+     *
+     * @return the bean name
+     */
+    @AliasFor(annotation = Component.class)
+    String value() default LoggerConstant.EMPTY;
 }

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.annotation;
 
+import com.lzhpo.logger.LoggerConstant;
+import com.lzhpo.logger.LoggerEvent;
 import java.lang.annotation.*;
 import org.intellij.lang.annotations.Language;
 
@@ -22,8 +24,8 @@ import org.intellij.lang.annotations.Language;
  * @author lzhpo
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Logger {
 
     /**

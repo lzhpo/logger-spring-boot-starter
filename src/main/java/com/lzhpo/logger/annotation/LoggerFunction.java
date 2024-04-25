@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.domain;
+package com.lzhpo.logger.annotation;
 
-import lombok.Data;
+import cn.hutool.core.util.StrUtil;
+import java.lang.annotation.*;
 
 /**
+ * The logger function annotation, must be used on static methods.
+ *
  * @author lzhpo
  */
-@Data
-public class OrderRequest {
+@Documented
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LoggerFunction {
 
-    private String userId;
-    private String productId;
+    /**
+     * The register function name, will get method name if empty.
+     *
+     * @return function name
+     */
+    String value() default StrUtil.EMPTY;
 }
