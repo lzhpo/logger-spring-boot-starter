@@ -17,10 +17,7 @@ package com.lzhpo.logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.lzhpo.logger.domain.Admin;
-import com.lzhpo.logger.domain.User;
-import com.lzhpo.logger.domain.UserWithDisabledField;
-import com.lzhpo.logger.domain.UserWithDisabledObject;
+import com.lzhpo.logger.domain.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -166,7 +163,7 @@ class LoggerActionTest {
         UserWithDisabledObject oldUser = UserWithDisabledObject.builder()
                 .username("Jack")
                 .age(22)
-                .email("rose@gmail.com")
+                .email("jack@gmail.com")
                 .phone("123456")
                 .build();
 
@@ -183,7 +180,33 @@ class LoggerActionTest {
         assertFalse(StringUtils.hasText(message));
         assertFalse(message.contains("[username] has been updated from [Jack] to [Rose]"));
         assertFalse(message.contains("[age] has been updated from [22] to [23]"));
-        assertFalse(message.contains("[email] has been updated from [rose@gmail.com] to [jack@gmail.com]"));
+        assertFalse(message.contains("[email] has been updated from [jack@gmail.com] to [rose@gmail.com]"));
         assertFalse(message.contains("[phone] has been updated from [123456] to [456789]"));
+    }
+
+    @Test
+    void userWithTitleDiff() {
+        UserWithTitle oldUser = UserWithTitle.builder()
+                .username("Jack")
+                .age(22)
+                .email("jack@gmail.com")
+                .phone("123456")
+                .build();
+
+        UserWithTitle newUser = UserWithTitle.builder()
+                .username("Rose")
+                .age(23)
+                .email("rose@gmail.com")
+                .phone("456789")
+                .build();
+
+        loggerAction.userWithTitleDiff(oldUser, newUser);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("[用户名称] has been updated from [Jack] to [Rose]"));
+        assertTrue(message.contains("[用户年龄] has been updated from [22] to [23]"));
+        assertTrue(message.contains("[用户邮箱] has been updated from [jack@gmail.com] to [rose@gmail.com]"));
+        assertTrue(message.contains("[用户号码] has been updated from [123456] to [456789]"));
     }
 }

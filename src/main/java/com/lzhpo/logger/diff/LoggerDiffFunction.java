@@ -33,6 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 
 /**
  * @author lzhpo
@@ -101,25 +102,25 @@ public class LoggerDiffFunction implements InitializingBean {
         Map<String, Field> newFieldMap = getFieldsMap(newObjectClass);
 
         oldFieldMap.forEach((oldFieldName, oldField) -> {
-            Object oldObjFieldValue = ReflectUtil.getFieldValue(oldObject, oldFieldName);
+            Object oldValue = ReflectUtil.getFieldValue(oldObject, oldFieldName);
             Field newField = newFieldMap.get(oldFieldName);
 
             if (Objects.nonNull(newField)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, oldFieldName);
-                if (!Objects.equals(oldObjFieldValue, newValue)) {
-                    diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, newValue));
-                    log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldObjFieldValue, newValue);
+                if (!Objects.equals(oldValue, newValue)) {
+                    diffFieldResults.add(createDiffResult(oldFieldName, oldField, oldValue, newField, newValue));
+                    log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldValue, newValue);
                 }
             } else {
-                diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, null));
-                log.debug("Field {}={} has bean deleted.", oldFieldName, oldObjFieldValue);
+                diffFieldResults.add(createDiffResult(oldFieldName, oldField, oldValue, null, null));
+                log.debug("Field {}={} has bean deleted.", oldFieldName, oldValue);
             }
         });
 
         newFieldMap.forEach((newFieldName, newField) -> {
             if (!oldFieldMap.containsKey(newFieldName)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, newFieldName);
-                diffFieldResults.add(createDiffResult(newFieldName, null, newValue));
+                diffFieldResults.add(createDiffResult(newFieldName, null, null, newField, newValue));
                 log.debug("Field {}={} has bean added.", newFieldName, newValue);
             }
         });
@@ -139,7 +140,7 @@ public class LoggerDiffFunction implements InitializingBean {
         Class<?> newObjectClass = newObject.getClass();
         DiffObjectResult diffObjectResult = createDiffObjectResult(oldObjectClass.getName(), newObjectClass.getName());
         if (!Objects.equals(oldObject, newObject)) {
-            diffObjectResult.getFieldResults().add(createDiffResult(null, oldObject, newObject));
+            diffObjectResult.getFieldResults().add(createDiffResult(null, null, oldObject, null, newObject));
         }
         return diffObjectResult;
     }
@@ -184,10 +185,10 @@ public class LoggerDiffFunction implements InitializingBean {
      * @return the fields map
      */
     public static Map<String, Field> getFieldsMap(Class<?> objectClass) {
-        return Arrays.stream(ReflectUtil.getFields(objectClass))
-                .filter(field -> !Optional.ofNullable(field.getAnnotation(LoggerDiffField.class))
-                        .map(LoggerDiffField::disabled)
-                        .isPresent())
+        return Arrays.stream(ReflectUtil.getFields(objectClass, field -> {
+                    LoggerDiffField loggerDiffField = field.getAnnotation(LoggerDiffField.class);
+                    return Objects.isNull(loggerDiffField) || !loggerDiffField.disabled();
+                }))
                 .collect(Collectors.toMap(Field::getName, Function.identity()));
     }
 
@@ -220,17 +221,35 @@ public class LoggerDiffFunction implements InitializingBean {
     /**
      * Create diff result.
      *
-     * @param oldFieldName the old object field name
-     * @param oldValue     the old object field value
-     * @param newValue     the new object field value
+     * @param fieldName the old object field name
+     * @param oldValue  the old object field value
+     * @param newValue  the new object field value
      * @return the diff field result
      */
-    public static DiffFieldResult createDiffResult(String oldFieldName, Object oldValue, Object newValue) {
+    // spotless:off
+    public static DiffFieldResult createDiffResult(String fieldName, Field oldField, Object oldValue, Field newField, Object newValue) {
         DiffFieldResult diffResult = new DiffFieldResult();
-        diffResult.setFieldName(oldFieldName);
-        diffResult.setOldValue(oldValue);
+        diffResult.setFieldName(fieldName);
+        diffResult.setNewTitle(getFieldTitle(newField));
         diffResult.setNewValue(newValue);
+        diffResult.setOldTitle(getFieldTitle(oldField));
+        diffResult.setOldValue(oldValue);
         return diffResult;
+    }
+    // spotless:on
+
+    /**
+     * Get field title.
+     *
+     * @param field the field
+     * @return field title
+     */
+    public static String getFieldTitle(Field field) {
+        return Optional.ofNullable(field)
+                .map(x -> x.getAnnotation(LoggerDiffField.class))
+                .map(LoggerDiffField::title)
+                .filter(StringUtils::hasText)
+                .orElse(null);
     }
 
     /**
@@ -240,8 +259,11 @@ public class LoggerDiffFunction implements InitializingBean {
      * @return the message template map
      */
     public static Map<String, Object> createMessageTemplateMap(DiffFieldResult diffResult) {
+        String title = Optional.ofNullable(diffResult.getOldTitle()).orElseGet(diffResult::getNewTitle);
+        String fieldName = StrUtil.blankToDefault(title, diffResult.getFieldName());
+
         Map<String, Object> messageTemplateMap = new HashMap<>();
-        messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_FILED_NAME, diffResult.getFieldName());
+        messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_FILED_NAME, fieldName);
         messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_OLD_FIELD_VALUE, diffResult.getOldValue());
         messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_NEW_FIELD_VALUE, diffResult.getNewValue());
         return messageTemplateMap;

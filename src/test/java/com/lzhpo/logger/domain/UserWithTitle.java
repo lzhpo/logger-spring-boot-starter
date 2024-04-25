@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger;
+package com.lzhpo.logger.domain;
 
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
+import com.lzhpo.logger.annotation.LoggerDiffField;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author lzhpo
  */
-@UtilityClass
-public class LoggerTestSupport {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserWithTitle {
 
-    private static LoggerEvent loggerEvent;
+    @LoggerDiffField(title = "用户名称")
+    private String username;
 
-    public static void setLoggerEvent(LoggerEvent diffResults) {
-        LoggerTestSupport.loggerEvent = diffResults;
-    }
+    @LoggerDiffField(title = "用户年龄")
+    private Integer age;
 
-    @SneakyThrows
-    public static LoggerEvent getLoggerEvent() {
-        Thread.sleep(200);
-        return loggerEvent;
-    }
+    @LoggerDiffField(title = "用户邮箱")
+    private String email;
 
-    public static String getMessage() {
-        return getLoggerEvent().getMessage();
-    }
+    @LoggerDiffField(title = "用户号码")
+    private String phone;
 }

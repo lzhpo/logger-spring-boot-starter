@@ -30,6 +30,8 @@ import lombok.NoArgsConstructor;
 public class DiffFieldResult {
 
     private String fieldName;
+    private String oldTitle;
     private Object oldValue;
+    private String newTitle;
     private Object newValue;
 }

@@ -15,6 +15,7 @@
  */
 package com.lzhpo.logger.annotation;
 
+import com.lzhpo.logger.LoggerConstant;
 import java.lang.annotation.*;
 
 /**
@@ -24,6 +25,13 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LoggerDiffField {
+
+    /**
+     * The field title.
+     *
+     * @return title
+     */
+    String title() default LoggerConstant.EMPTY;
 
     /**
      * Disable this field to diff.
