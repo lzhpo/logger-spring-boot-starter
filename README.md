@@ -173,7 +173,7 @@ public void adminUserDiff(Admin admin, User user) {
 ```
 
 其中，`DIFF` 是内置的函数，它会返回字符串形式的 diff 格式化结果，如有多个 diff 结果可设置指定的字符进行分隔。
-`DIFF` 的结果会放在 `LoggerEvent` 的 `diffResults` 字段，可以在 `LoggerEvent` 的监听器里面进行处理。
+`DIFF` 的结果会放在 `LoggerEvent` 的 `diffResults` 字段，如有特殊需求，可在 `LoggerEvent` 的监听器里面进行处理。
 
 支持自定义模板和分隔符：
 ```yml
