@@ -23,6 +23,8 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.lzhpo.logger.LoggerConstant;
 import com.lzhpo.logger.LoggerDiffProperties;
 import com.lzhpo.logger.annotation.LoggerComponent;
+import com.lzhpo.logger.annotation.LoggerDiffField;
+import com.lzhpo.logger.annotation.LoggerDiffObject;
 import com.lzhpo.logger.annotation.LoggerFunction;
 import com.lzhpo.logger.context.LoggerContextHolder;
 import java.lang.reflect.Field;
@@ -56,88 +58,174 @@ public class LoggerDiffFunction implements InitializingBean {
      *
      * @param oldObject the old object
      * @param newObject the new object
-     * @return the diff results
+     * @return the formated diff message
      */
     @LoggerFunction(LoggerConstant.FUNCTION_DIFF)
     public static String diff(Object oldObject, Object newObject) {
         log.debug("DIFF oldObject={}, newObject={}", oldObject, newObject);
-        StringJoiner messageJoiner = new StringJoiner(DIFF_MESSAGE_DELIMITER);
         if (Objects.isNull(oldObject) || Objects.isNull(newObject)) {
-            return messageJoiner.toString();
+            return StrUtil.EMPTY;
         }
 
+        if (isDisabledObjectDiff(oldObject, newObject)) {
+            log.debug("The oldObject or newObject has been disabled diff.");
+            return StrUtil.EMPTY;
+        }
+
+        final DiffObjectResult diffObjectResult;
+        if (isSimpleValueType(oldObject, newObject)) {
+            diffObjectResult = getDiffSimpleResult(oldObject, newObject);
+        } else {
+            diffObjectResult = getDiffObjectResult(oldObject, newObject);
+        }
+
+        LoggerContextHolder.putDiffResult(diffObjectResult);
+        return formatDiffResultsMessage(diffObjectResult.getFieldResults());
+    }
+
+    /**
+     * Get diff object result.
+     *
+     * @param oldObject the old object
+     * @param newObject the new object
+     * @return the diff result
+     */
+    public static DiffObjectResult getDiffObjectResult(Object oldObject, Object newObject) {
         Class<?> oldObjectClass = oldObject.getClass();
         Class<?> newObjectClass = newObject.getClass();
 
-        final DiffObjectResult diffObjectResult = new DiffObjectResult();
-        final List<DiffFieldResult> diffFieldResults = new ArrayList<>();
-        diffObjectResult.setFieldResults(diffFieldResults);
-        diffObjectResult.setOldObjectName(oldObjectClass.getName());
-        diffObjectResult.setNewObjectName(newObjectClass.getName());
+        DiffObjectResult diffObjectResult = createDiffObjectResult(oldObjectClass.getName(), newObjectClass.getName());
+        List<DiffFieldResult> diffFieldResults = diffObjectResult.getFieldResults();
 
-        if (ClassUtil.isSimpleValueType(oldObjectClass) || ClassUtil.isSimpleValueType(newObjectClass)) {
-            log.debug("The oldObject or newObject is simple value type.");
-            if (!Objects.equals(oldObject, newObject)) {
-                diffFieldResults.add(createDiffResult(null, oldObject, newObject));
+        Map<String, Field> oldFieldMap = getFieldsMap(oldObjectClass);
+        Map<String, Field> newFieldMap = getFieldsMap(newObjectClass);
+
+        oldFieldMap.forEach((oldFieldName, oldField) -> {
+            Object oldObjFieldValue = ReflectUtil.getFieldValue(oldObject, oldFieldName);
+            Field newField = newFieldMap.get(oldFieldName);
+
+            if (Objects.nonNull(newField)) {
+                Object newValue = ReflectUtil.getFieldValue(newObject, oldFieldName);
+                if (!Objects.equals(oldObjFieldValue, newValue)) {
+                    diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, newValue));
+                    log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldObjFieldValue, newValue);
+                }
+            } else {
+                diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, null));
+                log.debug("Field {}={} has bean deleted.", oldFieldName, oldObjFieldValue);
             }
-        } else {
-            Map<String, Field> oldFieldMap = getFieldsMap(oldObjectClass);
-            Map<String, Field> newFieldMap = getFieldsMap(newObjectClass);
+        });
 
-            oldFieldMap.forEach((oldFieldName, oldField) -> {
-                Object oldObjFieldValue = ReflectUtil.getFieldValue(oldObject, oldFieldName);
-                Field newField = newFieldMap.get(oldFieldName);
+        newFieldMap.forEach((newFieldName, newField) -> {
+            if (!oldFieldMap.containsKey(newFieldName)) {
+                Object newValue = ReflectUtil.getFieldValue(newObject, newFieldName);
+                diffFieldResults.add(createDiffResult(newFieldName, null, newValue));
+                log.debug("Field {}={} has bean added.", newFieldName, newValue);
+            }
+        });
 
-                if (Objects.nonNull(newField)) {
-                    Object newValue = ReflectUtil.getFieldValue(newObject, oldFieldName);
-                    if (!Objects.equals(oldObjFieldValue, newValue)) {
-                        diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, newValue));
-                        log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldObjFieldValue, newValue);
-                    }
-                } else {
-                    diffFieldResults.add(createDiffResult(oldFieldName, oldObjFieldValue, null));
-                    log.debug("Field {}={} has bean deleted.", oldFieldName, oldObjFieldValue);
-                }
-            });
+        return diffObjectResult;
+    }
 
-            newFieldMap.forEach((newFieldName, newField) -> {
-                if (!oldFieldMap.containsKey(newFieldName)) {
-                    Object newValue = ReflectUtil.getFieldValue(newObject, newFieldName);
-                    diffFieldResults.add(createDiffResult(newFieldName, null, newValue));
-                    log.debug("Field {}={} has bean added.", newFieldName, newValue);
-                }
-            });
+    /**
+     * Get diff simple value type result.
+     *
+     * @param oldObject the old object
+     * @param newObject the new object
+     * @return the diff result
+     */
+    public static DiffObjectResult getDiffSimpleResult(Object oldObject, Object newObject) {
+        Class<?> oldObjectClass = oldObject.getClass();
+        Class<?> newObjectClass = newObject.getClass();
+        DiffObjectResult diffObjectResult = createDiffObjectResult(oldObjectClass.getName(), newObjectClass.getName());
+        if (!Objects.equals(oldObject, newObject)) {
+            diffObjectResult.getFieldResults().add(createDiffResult(null, oldObject, newObject));
         }
+        return diffObjectResult;
+    }
 
+    /**
+     * Format diff message by configured template.
+     *
+     * @param diffFieldResults the diff field results
+     * @return the formated diff message
+     */
+    public static String formatDiffResultsMessage(List<DiffFieldResult> diffFieldResults) {
+        StringJoiner messageJoiner = new StringJoiner(DIFF_MESSAGE_DELIMITER);
         diffFieldResults.forEach(diffResult -> {
             Map<String, Object> messageTemplateMap = createMessageTemplateMap(diffResult);
             messageJoiner.add(StrUtil.format(DIFF_MESSAGE_TEMPLATE, messageTemplateMap, false));
         });
-
-        LoggerContextHolder.putDiffResult(diffObjectResult);
         return messageJoiner.toString();
+    }
+
+    /**
+     * Whether the old object or new object is disabled diff.
+     *
+     * @param oldObject the old object
+     * @param newObject the new object
+     * @return the result of whether disabled diff object
+     */
+    public static boolean isDisabledObjectDiff(Object oldObject, Object newObject) {
+        return Optional.of(oldObject.getClass())
+                        .map(clazz -> clazz.getAnnotation(LoggerDiffObject.class))
+                        .map(LoggerDiffObject::disabled)
+                        .isPresent()
+                || Optional.of(newObject.getClass())
+                        .map(clazz -> clazz.getAnnotation(LoggerDiffObject.class))
+                        .map(LoggerDiffObject::disabled)
+                        .isPresent();
     }
 
     /**
      * Get object class all fields and convert to map.
      *
      * @param objectClass the object class
-     * @return fields map
+     * @return the fields map
      */
-    private static Map<String, Field> getFieldsMap(Class<?> objectClass) {
+    public static Map<String, Field> getFieldsMap(Class<?> objectClass) {
         return Arrays.stream(ReflectUtil.getFields(objectClass))
+                .filter(field -> !Optional.ofNullable(field.getAnnotation(LoggerDiffField.class))
+                        .map(LoggerDiffField::disabled)
+                        .isPresent())
                 .collect(Collectors.toMap(Field::getName, Function.identity()));
+    }
+
+    /**
+     * Whether is simple value type.
+     *
+     * @param oldObject the old object
+     * @param newObject the new object
+     * @return the result of whether is simple value type
+     */
+    public static boolean isSimpleValueType(Object oldObject, Object newObject) {
+        return ClassUtil.isSimpleValueType(oldObject.getClass()) || ClassUtil.isSimpleValueType(newObject.getClass());
+    }
+
+    /**
+     * Create diff object result.
+     *
+     * @param oldObjectClassName the old object class name
+     * @param newObjectClassName the new object class name
+     * @return the diff object result
+     */
+    public static DiffObjectResult createDiffObjectResult(String oldObjectClassName, String newObjectClassName) {
+        DiffObjectResult diffObjectResult = new DiffObjectResult();
+        diffObjectResult.setOldObjectName(oldObjectClassName);
+        diffObjectResult.setNewObjectName(newObjectClassName);
+        diffObjectResult.setFieldResults(new ArrayList<>());
+        return diffObjectResult;
     }
 
     /**
      * Create diff result.
      *
      * @param oldFieldName the old object field name
-     * @param oldValue the old object field value
-     * @param newValue the new object field value
-     * @return diff result
+     * @param oldValue     the old object field value
+     * @param newValue     the new object field value
+     * @return the diff field result
      */
-    private static DiffFieldResult createDiffResult(String oldFieldName, Object oldValue, Object newValue) {
+    public static DiffFieldResult createDiffResult(String oldFieldName, Object oldValue, Object newValue) {
         DiffFieldResult diffResult = new DiffFieldResult();
         diffResult.setFieldName(oldFieldName);
         diffResult.setOldValue(oldValue);
@@ -149,9 +237,9 @@ public class LoggerDiffFunction implements InitializingBean {
      * Create diff format message template map.
      *
      * @param diffResult the diff result
-     * @return message template map
+     * @return the message template map
      */
-    private static Map<String, Object> createMessageTemplateMap(DiffFieldResult diffResult) {
+    public static Map<String, Object> createMessageTemplateMap(DiffFieldResult diffResult) {
         Map<String, Object> messageTemplateMap = new HashMap<>();
         messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_FILED_NAME, diffResult.getFieldName());
         messageTemplateMap.put(DIFF_MESSAGE_TEMPLATE_OLD_FIELD_VALUE, diffResult.getOldValue());

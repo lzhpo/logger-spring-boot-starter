@@ -15,14 +15,13 @@
  */
 package com.lzhpo.logger;
 
-import cn.hutool.core.util.IdUtil;
 import com.lzhpo.logger.annotation.Logger;
 import com.lzhpo.logger.annotation.LoggerComponent;
 import com.lzhpo.logger.annotation.LoggerFunction;
 import com.lzhpo.logger.context.LoggerContextHolder;
-import com.lzhpo.logger.diff.DiffNestedOrderRequest;
-import com.lzhpo.logger.domain.OrderRequest;
-import com.lzhpo.logger.domain.OrderResponse;
+import com.lzhpo.logger.domain.Admin;
+import com.lzhpo.logger.domain.User;
+import com.lzhpo.logger.domain.UserWithDisabledField;
 import org.springframework.stereotype.Component;
 
 /**
@@ -56,38 +55,23 @@ public class LoggerAction {
         // NOP
     }
 
-    @Logger(condition = "#result.isSuccess()", message = "'用户' + #findUserName(#request.getUserId()) + '下单了' + #findProductName(#request.getProductId())")
-    public OrderResponse createOrder1(OrderRequest request) {
-        return OrderResponse.builder()
-                .success(true)
-                .orderId(IdUtil.fastSimpleUUID())
-                .userId(request.getUserId())
-                .productId(request.getProductId())
-                .build();
-    }
-
-    @Logger(condition = "#result.isSuccess()", message = "'用户' + #findUserName(#request.getUserId()) + '下单了' + #findProductName(#request.getProductId())")
-    public OrderResponse createOrder2(OrderRequest request) {
-        return OrderResponse.builder()
-                .success(false)
-                .orderId(IdUtil.fastSimpleUUID())
-                .userId(request.getUserId())
-                .productId(request.getProductId())
-                .build();
-    }
-
     @Logger(message = "#DIFF(#oldAddress, #newAddress)")
     public void updateAddressDiff(String oldAddress, String newAddress) {
         // NOP
     }
 
-    @Logger(message = "#DIFF(#request1, #request2)")
-    public void createOrderDiff1(OrderRequest request1, OrderRequest request2) {
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userDiff(User oldUser, User newUser) {
         // NOP
     }
 
-    @Logger(message = "#DIFF(#request1, #request2)")
-    public void createOrderDiff2(DiffNestedOrderRequest request1, DiffNestedOrderRequest request2) {
+    @Logger(message = "#DIFF(#admin, #user)")
+    public void adminUserDiff(Admin admin, User user) {
+        // NOP
+    }
+
+    @Logger(message = "#DIFF(#oldUser, #newUser)")
+    public void userWithDisabledFieldDiff(UserWithDisabledField oldUser, UserWithDisabledField newUser) {
         // NOP
     }
 

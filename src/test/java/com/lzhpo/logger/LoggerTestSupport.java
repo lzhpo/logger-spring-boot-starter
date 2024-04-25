@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.diff;
+package com.lzhpo.logger;
 
-import com.lzhpo.logger.domain.OrderRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 /**
  * @author lzhpo
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class DiffNestedOrderRequest {
+@UtilityClass
+public class LoggerTestSupport {
 
-    private OrderRequest orderRequest;
+    private static LoggerEvent loggerEvent;
+
+    public static void setLoggerEvent(LoggerEvent diffResults) {
+        LoggerTestSupport.loggerEvent = diffResults;
+    }
+
+    @SneakyThrows
+    public static LoggerEvent getLoggerEvent() {
+        Thread.sleep(100);
+        return loggerEvent;
+    }
+
+    public static String getMessage() {
+        return getLoggerEvent().getMessage();
+    }
 }

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.diff;
+package com.lzhpo.logger.domain;
 
-import com.lzhpo.logger.domain.OrderResponse;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +27,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DiffNestedOrderResponse {
+public class User {
 
-    private List<OrderResponse> orderResponses;
+    private String username;
+    private Integer age;
+    private String email;
+    private String phone;
 }

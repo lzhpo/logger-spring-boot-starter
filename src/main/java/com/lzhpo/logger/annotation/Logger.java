@@ -24,8 +24,8 @@ import org.intellij.lang.annotations.Language;
  * @author lzhpo
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Logger {
 
     /**

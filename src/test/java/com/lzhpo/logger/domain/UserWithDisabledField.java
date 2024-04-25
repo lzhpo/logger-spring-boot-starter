@@ -15,7 +15,9 @@
  */
 package com.lzhpo.logger.domain;
 
+import com.lzhpo.logger.annotation.LoggerDiffField;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,11 +25,17 @@ import lombok.NoArgsConstructor;
  * @author lzhpo
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequest {
+public class UserWithDisabledField {
 
-    private String userId;
-    private String productId;
-    private String address;
+    @LoggerDiffField(disabled = true)
+    private String username;
+
+    private Integer age;
+
+    private String email;
+
+    private String phone;
 }

@@ -15,23 +15,20 @@
  */
 package com.lzhpo.logger.annotation;
 
-import cn.hutool.core.util.StrUtil;
 import java.lang.annotation.*;
 
 /**
- * The logger function annotation, must be used on static methods.
- *
  * @author lzhpo
  */
 @Documented
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoggerFunction {
+public @interface LoggerDiffObject {
 
     /**
-     * The register function name, will get method name if empty.
+     * Disable this object to diff.
      *
-     * @return function name
+     * @return whether disable
      */
-    String value() default StrUtil.EMPTY;
+    boolean disabled() default false;
 }

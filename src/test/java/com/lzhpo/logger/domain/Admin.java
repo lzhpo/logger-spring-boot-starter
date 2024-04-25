@@ -27,10 +27,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderResponse {
+public class Admin {
 
-    private boolean success;
-    private String orderId;
-    private String userId;
-    private String productId;
+    private String username;
+    private Integer age;
+    private String email;
+    private String phone;
+    private String role;
 }
