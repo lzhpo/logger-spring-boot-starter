@@ -183,7 +183,7 @@ logger:
     template: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"
 ```
 
-同时 diff 也支持排除指定对象或字段。
+同时 diff 也支持排除指定对象或字段，或者设置 diff 字段的标题。
 
 ```java
 // 排除此对象diff
@@ -204,6 +204,19 @@ public class UserWithDisabledField {
     private String username;
     
     private String email;
+}
+```
+
+```java
+public class UserWithTitle {
+
+    // 设置字段的标题
+    @LoggerDiffField(title = "用户名称")
+    private String username;
+
+    // 设置字段的标题
+    @LoggerDiffField(title = "用户年龄")
+    private Integer age;
 }
 ```
 
