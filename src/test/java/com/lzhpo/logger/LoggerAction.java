@@ -78,6 +78,9 @@ public class LoggerAction {
         // NOP
     }
 
+    // @el(DIFF: com.lzhpo.logger.diff.LoggerDiffFunction)
+    // @el(oldUser: com.lzhpo.logger.domain.UserWithTitle)
+    // @el(newUser: com.lzhpo.logger.domain.UserWithTitle)
     @Logger(message = "#DIFF(#oldUser, #newUser)")
     public void userWithTitleDiff(UserWithTitle oldUser, UserWithTitle newUser) {
         // NOP

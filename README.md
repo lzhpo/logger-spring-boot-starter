@@ -222,7 +222,11 @@ public class UserWithTitle {
 
 #### 2.5 关于`@Logger`注解在IDEA设置SpringEL的提示
 
-`@Logger` 注解中的属性已经支持在 IDEA 中自动有 SpringEL 的提示，无需手动设置。
+`@Logger` 注解中的属性已经支持在 IDEA 中自动高亮显示，并且有 SpringEL 的提示。
+
+![](docs/images/SpringEL-IDEA-6.png)
+
+![](docs/images/SpringEL-IDEA-7.png)
 
 ## 公众号
 
