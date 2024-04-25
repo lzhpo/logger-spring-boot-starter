@@ -125,20 +125,21 @@ public class OrderRegisterFunction {
 
 示例：
 ```java
-// 对比 oldAddress 和 newAddress
-@Logger(message = "#DIFF(#oldAddress, #newAddress)")
-public void updateAddressDiff(String oldAddress, String newAddress) {
+// 相同对象diff
+@Logger(message = "#DIFF(#oldUser, #newUser)")
+public void userDiff(User oldUser, User newUser) {
     // NOP
 }
 
-// 对比 request1 和 request2
-@Logger(message = "#DIFF(#request1, #request2)")
-public void createOrderDiff1(OrderRequest request1, OrderRequest request2) {
-    // NOP
+// 不同对象diff
+@Logger(message = "#DIFF(#admin, #user)")
+public void adminUserDiff(Admin admin, User user) {
+  // NOP
 }
 ```
 
-其中，`DIFF` 是内置的函数，它会返回字符串形式的 diff 结果，如有多个 diff 结果将用指定的字符进行分隔。
+其中，`DIFF` 是内置的函数，它会返回字符串形式的 diff 格式化结果，如有多个 diff 结果可设置指定的字符进行分隔。
+`DIFF` 的结果会放在 `LoggerEvent` 的 `diffResults` 字段，可以在 `LoggerEvent` 的监听器里面进行处理。
 
 支持自定义模板和分隔符：
 ```yml
