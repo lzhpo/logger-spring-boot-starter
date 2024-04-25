@@ -47,6 +47,8 @@ public final class LoggerConstant {
     public static final String DIFF_MESSAGE_DELIMITER = ", ";
 
     // spotless:off
-    public static final String DIFF_MESSAGE_TEMPLATE = "[{filedName}] has been updated from [{oldValue}] to [{newValue}]";
+    public static final String DIFF_MESSAGE_TEMPLATE_ADDED = "[{filedName}: {newValue}] has been added";
+    public static final String DIFF_MESSAGE_TEMPLATE_DELETED = "[{filedName}: {oldValue}] has been deleted";
+    public static final String DIFF_MESSAGE_TEMPLATE_UPDATED = "[{filedName}] has been updated from [{oldValue}] to [{newValue}]";
     // spotless:on
 }

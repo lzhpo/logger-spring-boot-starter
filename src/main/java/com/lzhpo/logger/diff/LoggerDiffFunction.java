@@ -16,7 +16,6 @@
 package com.lzhpo.logger.diff;
 
 import cn.hutool.core.util.ClassUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -42,17 +41,16 @@ import org.springframework.util.StringUtils;
 @LoggerComponent
 public class LoggerDiffFunction implements InitializingBean {
 
+    private static LoggerDiffProperties loggerDiffProperties;
     private static final String DIFF_MESSAGE_TEMPLATE_FILED_NAME = "filedName";
     private static final String DIFF_MESSAGE_TEMPLATE_OLD_FIELD_VALUE = "oldValue";
     private static final String DIFF_MESSAGE_TEMPLATE_NEW_FIELD_VALUE = "newValue";
-    private static String DIFF_MESSAGE_TEMPLATE = LoggerConstant.DIFF_MESSAGE_TEMPLATE;
-    private static String DIFF_MESSAGE_DELIMITER = LoggerConstant.DIFF_MESSAGE_DELIMITER;
 
     /**
      * Diff two object difference function.
      *
      * <ul>
-     *     <li><b>Updated field</b>: field exists in new object and old object, but value not same.</li>
+     *     <li><b>Updated field</b>: field exists in old object and new object, but value not same.</li>
      *     <li><b>Deleted field</b>: field not exists in new object, but exist in old object.</li>
      *     <li><b>Added field</b>: field not exists in old object, but exist in new object.</li>
      * </ul>
@@ -109,11 +107,16 @@ public class LoggerDiffFunction implements InitializingBean {
             if (Objects.nonNull(newField)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, oldFieldName);
                 if (!Objects.equals(oldValue, newValue)) {
-                    diffFieldResults.add(createDiffResult(oldFieldName, oldField, oldValue, newField, newValue));
+                    DiffFieldResult diffFieldResult =
+                            createDiffResult(oldFieldName, oldField, oldValue, newField, newValue);
+                    diffFieldResult.setState(DiffState.UPDATED);
+                    diffFieldResults.add(diffFieldResult);
                     log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldValue, newValue);
                 }
             } else {
-                diffFieldResults.add(createDiffResult(oldFieldName, oldField, oldValue, null, null));
+                DiffFieldResult diffFieldResult = createDiffResult(oldFieldName, oldField, oldValue, null, null);
+                diffFieldResult.setState(DiffState.DELETED);
+                diffFieldResults.add(diffFieldResult);
                 log.debug("Field {}={} has bean deleted.", oldFieldName, oldValue);
             }
         });
@@ -121,7 +124,9 @@ public class LoggerDiffFunction implements InitializingBean {
         newFieldMap.forEach((newFieldName, newField) -> {
             if (!oldFieldMap.containsKey(newFieldName)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, newFieldName);
-                diffFieldResults.add(createDiffResult(newFieldName, null, null, newField, newValue));
+                DiffFieldResult diffFieldResult = createDiffResult(newFieldName, null, null, newField, newValue);
+                diffFieldResult.setState(DiffState.ADDED);
+                diffFieldResults.add(diffFieldResult);
                 log.debug("Field {}={} has bean added.", newFieldName, newValue);
             }
         });
@@ -141,7 +146,9 @@ public class LoggerDiffFunction implements InitializingBean {
         Class<?> newObjectClass = newObject.getClass();
         DiffObjectResult diffObjectResult = createDiffObjectResult(oldObjectClass.getName(), newObjectClass.getName());
         if (!Objects.equals(oldObject, newObject)) {
-            diffObjectResult.getFieldResults().add(createDiffResult(null, null, oldObject, null, newObject));
+            DiffFieldResult diffFieldResult = createDiffResult(null, null, oldObject, null, newObject);
+            diffFieldResult.setState(DiffState.UPDATED);
+            diffObjectResult.getFieldResults().add(diffFieldResult);
         }
         return diffObjectResult;
     }
@@ -153,11 +160,26 @@ public class LoggerDiffFunction implements InitializingBean {
      * @return the formated diff message
      */
     public static String formatDiffResultsMessage(List<DiffFieldResult> diffFieldResults) {
-        StringJoiner messageJoiner = new StringJoiner(DIFF_MESSAGE_DELIMITER);
+        Map<DiffState, String> templateMap = loggerDiffProperties.getTemplate();
+        StringJoiner messageJoiner = new StringJoiner(loggerDiffProperties.getDelimiter());
+
         diffFieldResults.forEach(diffResult -> {
             Map<String, Object> messageTemplateMap = createMessageTemplateMap(diffResult);
-            messageJoiner.add(StrUtil.format(DIFF_MESSAGE_TEMPLATE, messageTemplateMap, false));
+            switch (diffResult.getState()) {
+                case ADDED:
+                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.ADDED), messageTemplateMap, false));
+                    break;
+                case DELETED:
+                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.DELETED), messageTemplateMap, false));
+                    break;
+                case UPDATED:
+                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.UPDATED), messageTemplateMap, false));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported diff state: " + diffResult.getState());
+            }
         });
+
         return messageJoiner.toString();
     }
 
@@ -272,10 +294,6 @@ public class LoggerDiffFunction implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        // spotless:off
-        LoggerDiffProperties loggerProperties = SpringUtil.getBean(LoggerDiffProperties.class);
-        DIFF_MESSAGE_TEMPLATE = ObjectUtil.defaultIfBlank(loggerProperties.getTemplate(), LoggerConstant.DIFF_MESSAGE_TEMPLATE);
-        DIFF_MESSAGE_DELIMITER = ObjectUtil.defaultIfBlank(loggerProperties.getDelimiter(), LoggerConstant.DIFF_MESSAGE_DELIMITER);
-        // spotless:on
+        loggerDiffProperties = SpringUtil.getBean(LoggerDiffProperties.class);
     }
 }

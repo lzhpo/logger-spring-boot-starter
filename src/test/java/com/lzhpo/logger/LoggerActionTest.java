@@ -140,7 +140,7 @@ class LoggerActionTest {
         assertTrue(message.contains("[age] has been updated from [22] to [23]"));
         assertTrue(message.contains("[email] has been updated from [jack@gmail.com] to [rose@gmail.com]"));
         assertTrue(message.contains("[phone] has been updated from [123456] to [456789]"));
-        assertTrue(message.contains("[role] has been updated from [admin] to []"));
+        assertTrue(message.contains("[role: admin] has been deleted"));
     }
 
     @Test
@@ -217,5 +217,22 @@ class LoggerActionTest {
         assertTrue(message.contains("[用户年龄] has been updated from [22] to [23]"));
         assertTrue(message.contains("[用户邮箱] has been updated from [jack@gmail.com] to [rose@gmail.com]"));
         assertTrue(message.contains("[用户号码] has been updated from [123456] to [456789]"));
+    }
+
+    @Test
+    void userToAdmin() {
+        User user = User.builder()
+                .username("Rose")
+                .age(23)
+                .email("rose@gmail.com")
+                .phone("456789")
+                .build();
+
+        Admin admin = loggerAction.userToAdmin(user);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("[status: ] has been deleted"));
+        assertTrue(message.contains("[role: admin] has been added"));
     }
 }

@@ -4,4 +4,7 @@ logging:
 logger:
   diff:
     delimiter: "; "
-    template: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"
+    template:
+      ADDED: "[{filedName}: {newValue}] has been added"
+      DELETED: "[{filedName}: {oldValue}] has been deleted"
+      UPDATED: "[{filedName}] has been updated from [{oldValue}] to [{newValue}]"

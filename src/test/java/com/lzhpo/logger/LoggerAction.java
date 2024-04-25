@@ -86,6 +86,30 @@ public class LoggerAction {
         // NOP
     }
 
+    // @el(DIFF: com.lzhpo.logger.diff.LoggerDiffFunction)
+    // @el(user: com.lzhpo.logger.domain.User)
+    // @el(result: com.lzhpo.logger.domain.Admin)
+    @Logger(
+            condition = "#result.getUsername() != null",
+            message = "#DIFF(#user, #result)",
+            operatorId = "#user.getUsername()",
+            businessId = "T(java.util.UUID).randomUUID()",
+            category = "T(java.util.UUID).randomUUID()",
+            tag = "T(java.util.UUID).randomUUID()",
+            prelude = false,
+            returning = true,
+            additional = "T(cn.hutool.json.JSONUtil).toJsonStr(#user)"
+    )
+    public Admin userToAdmin(User user) {
+        return Admin.builder()
+                .username(user.getUsername())
+                .age(user.getAge())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role("admin")
+                .build();
+    }
+
     @LoggerComponent
     public static class LoggerFunctions {
 

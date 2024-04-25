@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzhpo.logger.domain;
+package com.lzhpo.logger.diff;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author lzhpo
  */
-@Data
-@Builder
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class User implements Serializable {
+public enum DiffState {
+    ADDED("The field not exists in old object, but exist in new object."),
 
-    private String username;
-    private Integer age;
-    private String email;
-    private String phone;
-    private String status;
+    UPDATED("The field exists in old object and new object, but value not same."),
+
+    DELETED("The field not exists in new object, but exist in old object.");
+
+    private final String reason;
 }
