@@ -100,6 +100,7 @@ public class LoggerDiffFunction implements InitializingBean {
 
         Map<String, Field> oldFieldMap = getFieldsMap(oldObjectClass);
         Map<String, Field> newFieldMap = getFieldsMap(newObjectClass);
+        log.debug("Found {} field in old object, found {} field in new object", oldFieldMap.size(), newFieldMap.size());
 
         oldFieldMap.forEach((oldFieldName, oldField) -> {
             Object oldValue = ReflectUtil.getFieldValue(oldObject, oldFieldName);
