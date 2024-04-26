@@ -86,9 +86,6 @@ public class LoggerAction {
         // NOP
     }
 
-    // @el(DIFF: com.lzhpo.logger.diff.LoggerDiffFunction)
-    // @el(user: com.lzhpo.logger.domain.User)
-    // @el(result: com.lzhpo.logger.domain.Admin)
     @Logger(
             condition = "#result.getUsername() != null",
             message = "#DIFF(#user, #result)",

@@ -53,31 +53,46 @@ class LoggerActionTest {
     @Test
     void updateAddress() {
         loggerAction.updateAddress("朝阳小区1号", "光明小区1号");
-        assertTrue(true);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("将地址从朝阳小区1号修改为光明小区1号"));
     }
 
     @Test
     void updateNewAddress() {
         loggerAction.updateNewAddress("幸福小区1号");
-        assertTrue(true);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("将地址从光明小区1号修改为幸福小区1号"));
     }
 
     @Test
     void updateNewSex() {
         loggerAction.updateNewSex("男");
-        assertTrue(true);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("性别已修改为男"));
     }
 
     @Test
     void findUserAge() {
         Integer userAge = loggerAction.findUserAge("123");
-        assertNotNull(userAge);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("用户123年龄为23"));
     }
 
     @Test
     void systemDate() {
         loggerAction.systemDate();
-        assertTrue(true);
+
+        String message = LoggerTestSupport.getMessage();
+        assertTrue(StringUtils.hasText(message));
+        assertTrue(message.contains("当前时间为"));
     }
 
     @Test
@@ -111,8 +126,8 @@ class LoggerActionTest {
         assertTrue(StringUtils.hasText(message));
         assertFalse(message.contains("[username] has been updated from [Jack] to [Rose]"));
         assertTrue(message.contains("[age] has been updated from [22] to [23]"));
-        assertTrue(message.contains("[email] has been updated from [] to [jack@gmail.com]"));
-        assertTrue(message.contains("[phone] has been updated from [123456] to []"));
+        assertTrue(message.contains("[email: jack@gmail.com] has been added"));
+        assertTrue(message.contains("[phone: 123456] has been deleted"));
     }
 
     @Test
@@ -163,8 +178,8 @@ class LoggerActionTest {
         assertTrue(StringUtils.hasText(message));
         assertFalse(message.contains("[username] has been updated from [Jack] to [Rose]"));
         assertTrue(message.contains("[age] has been updated from [22] to [23]"));
-        assertTrue(message.contains("[email] has been updated from [] to [jack@gmail.com]"));
-        assertTrue(message.contains("[phone] has been updated from [123456] to []"));
+        assertTrue(message.contains("[email: jack@gmail.com] has been added"));
+        assertTrue(message.contains("[phone: 123456] has been deleted"));
     }
 
     @Test

@@ -16,6 +16,7 @@
 package com.lzhpo.logger.diff;
 
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -89,6 +90,7 @@ public class LoggerDiffFunction implements InitializingBean {
      * @param newObject the new object
      * @return the diff result
      */
+    // spotless:off
     public static DiffObjectResult getDiffObjectResult(Object oldObject, Object newObject) {
         Class<?> oldObjectClass = oldObject.getClass();
         Class<?> newObjectClass = newObject.getClass();
@@ -106,33 +108,40 @@ public class LoggerDiffFunction implements InitializingBean {
 
             if (Objects.nonNull(newField)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, oldFieldName);
-                if (!Objects.equals(oldValue, newValue)) {
-                    DiffFieldResult diffFieldResult =
-                            createDiffResult(oldFieldName, oldField, oldValue, newField, newValue);
-                    diffFieldResult.setState(DiffState.UPDATED);
-                    diffFieldResults.add(diffFieldResult);
-                    log.debug("Field {} updated from [{}] to [{}]", oldFieldName, oldValue, newValue);
+
+                final DiffState state;
+                if (!Objects.equals(oldValue, newValue) && ObjectUtil.isAllNotEmpty(oldValue, newValue)) {
+                    state = DiffState.UPDATED;
+                } else if (Objects.nonNull(oldValue) && Objects.isNull(newValue)) {
+                    state = DiffState.DELETED;
+                } else if (Objects.isNull(oldValue) && Objects.nonNull(newValue)) {
+                    state = DiffState.ADDED;
+                } else {
+                    return;
                 }
+
+                DiffFieldResult diffFieldResult = createDiffFieldResult(oldFieldName, oldField, oldValue, newField, newValue);
+                diffFieldResult.setState(state);
+                diffFieldResults.add(diffFieldResult);
             } else {
-                DiffFieldResult diffFieldResult = createDiffResult(oldFieldName, oldField, oldValue, null, null);
+                DiffFieldResult diffFieldResult = createDiffFieldResult(oldFieldName, oldField, oldValue, null, null);
                 diffFieldResult.setState(DiffState.DELETED);
                 diffFieldResults.add(diffFieldResult);
-                log.debug("Field {}={} has bean deleted.", oldFieldName, oldValue);
             }
         });
 
         newFieldMap.forEach((newFieldName, newField) -> {
             if (!oldFieldMap.containsKey(newFieldName)) {
                 Object newValue = ReflectUtil.getFieldValue(newObject, newFieldName);
-                DiffFieldResult diffFieldResult = createDiffResult(newFieldName, null, null, newField, newValue);
+                DiffFieldResult diffFieldResult = createDiffFieldResult(newFieldName, null, null, newField, newValue);
                 diffFieldResult.setState(DiffState.ADDED);
                 diffFieldResults.add(diffFieldResult);
-                log.debug("Field {}={} has bean added.", newFieldName, newValue);
             }
         });
 
         return diffObjectResult;
     }
+    // spotless:on
 
     /**
      * Get diff simple value type result.
@@ -146,7 +155,7 @@ public class LoggerDiffFunction implements InitializingBean {
         Class<?> newObjectClass = newObject.getClass();
         DiffObjectResult diffObjectResult = createDiffObjectResult(oldObjectClass.getName(), newObjectClass.getName());
         if (!Objects.equals(oldObject, newObject)) {
-            DiffFieldResult diffFieldResult = createDiffResult(null, null, oldObject, null, newObject);
+            DiffFieldResult diffFieldResult = createDiffFieldResult(null, null, oldObject, null, newObject);
             diffFieldResult.setState(DiffState.UPDATED);
             diffObjectResult.getFieldResults().add(diffFieldResult);
         }
@@ -159,13 +168,15 @@ public class LoggerDiffFunction implements InitializingBean {
      * @param diffFieldResults the diff field results
      * @return the formated diff message
      */
+    // spotless:off
     public static String formatDiffResultsMessage(List<DiffFieldResult> diffFieldResults) {
         Map<DiffState, String> templateMap = loggerDiffProperties.getTemplate();
         StringJoiner messageJoiner = new StringJoiner(loggerDiffProperties.getDelimiter());
 
-        diffFieldResults.forEach(diffResult -> {
-            Map<String, Object> messageTemplateMap = createMessageTemplateMap(diffResult);
-            switch (diffResult.getState()) {
+        diffFieldResults.stream().filter(fieldResult -> Objects.nonNull(fieldResult.getState())).forEach(fieldResult -> {
+            Map<String, Object> messageTemplateMap = createMessageTemplateMap(fieldResult);
+            DiffState diffState = fieldResult.getState();
+            switch (diffState) {
                 case ADDED:
                     messageJoiner.add(StrUtil.format(templateMap.get(DiffState.ADDED), messageTemplateMap, false));
                     break;
@@ -176,12 +187,14 @@ public class LoggerDiffFunction implements InitializingBean {
                     messageJoiner.add(StrUtil.format(templateMap.get(DiffState.UPDATED), messageTemplateMap, false));
                     break;
                 default:
-                    throw new IllegalArgumentException("Unsupported diff state: " + diffResult.getState());
+                    log.error("Unknown diff state: {}", diffState);
+                    break;
             }
         });
 
         return messageJoiner.toString();
     }
+    // spotless:on
 
     /**
      * Whether the old object or new object is disabled diff.
@@ -242,15 +255,15 @@ public class LoggerDiffFunction implements InitializingBean {
     }
 
     /**
-     * Create diff result.
+     * Create diff field result.
      *
      * @param fieldName the old object field name
      * @param oldValue  the old object field value
      * @param newValue  the new object field value
      * @return the diff field result
      */
-    // spotless:off
-    public static DiffFieldResult createDiffResult(String fieldName, Field oldField, Object oldValue, Field newField, Object newValue) {
+    public static DiffFieldResult createDiffFieldResult(
+            String fieldName, Field oldField, Object oldValue, Field newField, Object newValue) {
         DiffFieldResult diffResult = new DiffFieldResult();
         diffResult.setFieldName(fieldName);
         diffResult.setNewTitle(getFieldTitle(newField));
@@ -259,7 +272,6 @@ public class LoggerDiffFunction implements InitializingBean {
         diffResult.setOldValue(oldValue);
         return diffResult;
     }
-    // spotless:on
 
     /**
      * Get field title.
