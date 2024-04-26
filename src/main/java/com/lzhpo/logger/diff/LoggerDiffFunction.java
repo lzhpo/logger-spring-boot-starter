@@ -174,22 +174,10 @@ public class LoggerDiffFunction implements InitializingBean {
         StringJoiner messageJoiner = new StringJoiner(loggerDiffProperties.getDelimiter());
 
         diffFieldResults.stream().filter(fieldResult -> Objects.nonNull(fieldResult.getState())).forEach(fieldResult -> {
-            Map<String, Object> messageTemplateMap = createMessageTemplateMap(fieldResult);
             DiffState diffState = fieldResult.getState();
-            switch (diffState) {
-                case ADDED:
-                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.ADDED), messageTemplateMap, false));
-                    break;
-                case DELETED:
-                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.DELETED), messageTemplateMap, false));
-                    break;
-                case UPDATED:
-                    messageJoiner.add(StrUtil.format(templateMap.get(DiffState.UPDATED), messageTemplateMap, false));
-                    break;
-                default:
-                    log.error("Unknown diff state: {}", diffState);
-                    break;
-            }
+            Map<String, Object> variablesMap = createMessageTemplateMap(fieldResult);
+            String message = diffState.format(templateMap, variablesMap);
+            messageJoiner.add(message);
         });
 
         return messageJoiner.toString();

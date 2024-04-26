@@ -15,6 +15,8 @@
  */
 package com.lzhpo.logger.diff;
 
+import cn.hutool.core.util.StrUtil;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,11 +26,43 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DiffState {
-    ADDED("The field not exists in old object, but exist in new object."),
 
-    UPDATED("The field exists in old object and new object, but value not same."),
+    /**
+     * The field not exists in old object, but exist in new object.
+     */
+    ADDED {
+        @Override
+        public String format(Map<DiffState, String> templateMap, Map<String, Object> variableMap) {
+            return StrUtil.format(templateMap.get(ADDED), variableMap, false);
+        }
+    },
 
-    DELETED("The field not exists in new object, but exist in old object.");
+    /**
+     * The field exists in old object and new object, but value not same.
+     */
+    UPDATED {
+        @Override
+        public String format(Map<DiffState, String> templateMap, Map<String, Object> variableMap) {
+            return StrUtil.format(templateMap.get(UPDATED), variableMap, false);
+        }
+    },
 
-    private final String reason;
+    /**
+     * The field not exists in new object, but exist in old object.
+     */
+    DELETED {
+        @Override
+        public String format(Map<DiffState, String> templateMap, Map<String, Object> variableMap) {
+            return StrUtil.format(templateMap.get(DELETED), variableMap, false);
+        }
+    };
+
+    /**
+     * Use template and variable to format message.
+     *
+     * @param templateMap the template map
+     * @param variableMap the variable map
+     * @return the formated message
+     */
+    public abstract String format(Map<DiffState, String> templateMap, Map<String, Object> variableMap);
 }
