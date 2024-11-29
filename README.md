@@ -228,9 +228,6 @@ public class UserWithTitle {
 
 ![](docs/images/SpringEL-IDEA-6.png)
 
-## 公众号
+## 微信公众号
 
-|         微信          |            公众号             |
-|:-------------------:|:--------------------------:|
-| ![](./docs/images/微信.jpg) | ![](./docs/images/公众号.jpg) |
-
+<img src="./docs/images/WeChat-MP.png" width="453" height="150" alt="会打篮球的程序猿">
